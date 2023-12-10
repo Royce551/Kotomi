@@ -4,7 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Kotomi.ViewModels;assembly=Kotomi"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kotomi.Views.ReaderView"
+             x:Class="Kotomi.Views.ReaderView" Background="{DynamicResource BackgroundColor}"
              x:DataType="vm:ReaderViewModel">
-  <Button Command="{Binding SwitchToLibraryView}">Switch to Library</Button>
+  <DockPanel>
+    <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}">
+      <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}" LastChildFill="False">
+        <Button Margin="5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Switch to Library</Button>
+
+        <Button Margin="5" DockPanel.Dock="Right">Settings</Button>
+      </DockPanel>
+    </Panel>
+    <Panel Background="{DynamicResource BackgroundColor}">
+      <TransitioningContentControl Content="{Binding CurrentPage}">
+        <TransitioningContentControl.PageTransition>
+          <!--<PageSlide Orientation="Vertical" Duration="0:00:00.200" SlideOutEasing="ExponentialEaseOut" SlideInEasing="ExponentialEaseIn"/>-->
+          <CompositePageTransition>
+            <CrossFade Duration="0:00:00.1"/>
+            <PageSlide Orientation="Horizontal" Duration="0:00:00.3" SlideInEasing="QuadraticEaseOut" SlideOutEasing="QuadraticEaseIn"/>
+          </CompositePageTransition>
+        </TransitioningContentControl.PageTransition>
+      </TransitioningContentControl>
+
+      <Grid ColumnDefinitions="0.5*,0.5*">
+        <Button Grid.Column="0" Command="{Binding PageLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0"/>
+        <Button Grid.Column="1" Command="{Binding PageRight}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0"/>
+      </Grid>
+    </Panel>
+  </DockPanel>
 </UserControl>

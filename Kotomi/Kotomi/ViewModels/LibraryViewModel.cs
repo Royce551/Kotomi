@@ -8,13 +8,11 @@ namespace Kotomi.ViewModels
 {
     public partial class LibraryViewModel : PageViewModelBase
     {
-        public LibraryViewModel(MainViewModel mainView) : base(mainView)
+        public LibraryViewModel()
         {
+
         }
 
-        public void SwitchToReaderView()
-        {
-            MainView.SelectedView = new ReaderViewModel(MainView);
-        }
+        public void SwitchToReaderView() => MainView.NavigateTo(new ReaderViewModel());
     }
 }

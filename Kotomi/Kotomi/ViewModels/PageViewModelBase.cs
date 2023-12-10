@@ -8,11 +8,11 @@ namespace Kotomi.ViewModels
 {
     public class PageViewModelBase : ViewModelBase
     {
-        public MainViewModel MainView { get; init; }
+        public MainViewModel MainView { get; set; } = default!;
 
-        public PageViewModelBase(MainViewModel mainView)
+        public PageViewModelBase()
         {
-            MainView = mainView;
+
         }
     }
 }

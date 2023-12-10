@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +10,23 @@ namespace Kotomi.ViewModels
 {
     public partial class ReaderViewModel : PageViewModelBase
     {
-        public ReaderViewModel(MainViewModel mainView) : base(mainView)
+        public ReaderViewModel()
         {
         }
 
-        public void SwitchToLibraryView()
+        [ObservableProperty]
+        private Control? currentPage;
+
+        public void SwitchToLibraryView() => MainView.NavigateTo(new LibraryViewModel());
+
+        public void PageLeft()
         {
-            MainView.SelectedView = new LibraryViewModel(MainView);
+
+        }
+
+        public void PageRight()
+        {
+
         }
     }
 }
