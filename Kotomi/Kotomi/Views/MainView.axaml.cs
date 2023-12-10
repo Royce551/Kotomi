@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
+using Avalonia.Platform.Storage;
 using Kotomi.ViewModels;
 
 namespace Kotomi.Views
@@ -15,7 +16,7 @@ namespace Kotomi.Views
 
         private IInsetsManager? insetsManager;
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        protected override async void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kotomi.Models.Series;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,9 @@ namespace Kotomi.ViewModels
 
         }
 
-        public void SwitchToReaderView() => MainView.NavigateTo(new ReaderViewModel());
+        public void OpenReader(string url)
+        {
+            MainView.NavigateTo(new ReaderViewModel(new FolderSeriesProvider().GetSeriesForURL(url)));
+        }
     }
 }
