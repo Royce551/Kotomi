@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kotomi.ViewModels
 {
-    public class PageViewModelBase
+    public class PageViewModelBase : ViewModelBase
     {
         public MainViewModel MainView { get; init; }
 

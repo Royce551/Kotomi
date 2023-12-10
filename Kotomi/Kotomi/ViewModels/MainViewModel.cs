@@ -3,12 +3,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Kotomi.ViewModels
 {
-    public partial class MainViewModel : ObservableObject
+    public partial class MainViewModel : ViewModelBase
     {
         [ObservableProperty]
-        private string greeting = "FRESHMusicPlayer, Kotomi";
+        private PageViewModelBase? selectedView;
 
         [ObservableProperty]
         private Thickness safeArea = new(0);
+
+        public MainViewModel()
+        {
+            SelectedView = new LibraryViewModel(this);
+        }
     }
 }

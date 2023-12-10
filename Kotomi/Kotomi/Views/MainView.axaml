@@ -12,8 +12,14 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <DockPanel Margin="{Binding SafeArea}" Background="{DynamicResource BackgroundColor}">
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-  </DockPanel>
+  <TransitioningContentControl Content="{Binding SelectedView}">
+    <TransitioningContentControl.PageTransition>
+      <!--<PageSlide Orientation="Vertical" Duration="0:00:00.200" SlideOutEasing="ExponentialEaseOut" SlideInEasing="ExponentialEaseIn"/>-->
+      <CompositePageTransition>
+        <CrossFade Duration="0:00:00.1"/>
+        <PageSlide Orientation="Vertical" Duration="0:00:00.3" SlideInEasing="QuadraticEaseOut" SlideOutEasing="QuadraticEaseIn"/>
+      </CompositePageTransition>
+    </TransitioningContentControl.PageTransition>
+  </TransitioningContentControl>
 
 </UserControl>
