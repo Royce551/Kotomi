@@ -8,18 +8,18 @@
              x:DataType="vm:ReaderViewModel">
   <DockPanel>
     <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}">
-      <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}">
-        <Button Margin="5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Switch to Library</Button>
-        
-        <Button Margin="5" DockPanel.Dock="Right">Settings</Button>
-
-        <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <TextBlock Text="{Binding Series.Title}" FontWeight="Bold"/>
+      <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}" LastChildFill="False">
+        <Button Margin="5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Library</Button>
+        <StackPanel DockPanel.Dock="Left" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="{Binding Series.Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
           <TextBlock Margin="10,0,0,0" Text="Chapter"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Chapter}"/>
           <TextBlock Margin="10,0,0,0" Text="Page"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Page}"/>
+          <TextBlock Margin="5,0,0,0" Text="/"/>
+          <TextBlock Margin="5,0,0,0" Text="{Binding CurrentChapter.TotalPages}"/>
         </StackPanel>
+        <Button Margin="5" DockPanel.Dock="Right">Settings</Button>
       </DockPanel>
     </Panel>
     <Panel Background="{DynamicResource BackgroundColor}">

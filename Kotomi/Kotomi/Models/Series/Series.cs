@@ -7,19 +7,21 @@ using System.Threading.Tasks;
 
 namespace Kotomi.Models.Series
 {
-    public class Series
+    public interface ISeries
     {
-        public string? Title { get; set; }
+        public string? Title { get; }
 
-        public Bitmap? Cover { get; set; }
+        public Bitmap? Cover { get;}
 
-        public Chapter[]? Chapters { get; set; }
+        public IChapter[]? Chapters { get; }
     }
 
-    public class Chapter
+    public interface IChapter
     {
-        public string? Title { get; set; }
+        public string? Title { get; }
 
-        public Bitmap[]? Pages { get; set; }
+        public int? TotalPages { get; }
+
+        public Bitmap GetPage(int pageNumber);
     }
 }

@@ -12,25 +12,28 @@ namespace Kotomi.ViewModels
     public partial class ReaderViewModel : PageViewModelBase
     {
         [ObservableProperty]
-        private Series series;
+        private ISeries series;
 
-        public ReaderViewModel(Series series)
+        public ReaderViewModel(ISeries series)
         {
             this.series = series;
         }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        private int chapter = 0;
+        [NotifyPropertyChangedFor(nameof(CurrentChapter))]
+        private int chapter = 1;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        private int page = 0;
+        private int page = 1;
 
         public Control CurrentPage => new Image()
         {
-            Source = series.Chapters[chapter].Pages[page]
+            Source = CurrentChapter.GetPage(page)
         };
+
+        public IChapter CurrentChapter => series.Chapters[chapter - 1];
 
         public void SwitchToLibraryView() => MainView.NavigateTo(new LibraryViewModel());
 
