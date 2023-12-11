@@ -24,7 +24,7 @@ namespace Kotomi.Models.Series
             foreach (var directory in chapterDirectories)
             {
                 var chapter = new FolderChapter();
-                chapter.Title = Path.GetDirectoryName(directory);
+                chapter.Title = Path.GetFileName(directory);
                 var pages = Directory.GetFiles(directory).ToList();
                 pages.Sort();
                 chapter.Pages = pages;

@@ -19,10 +19,13 @@ namespace Kotomi.ViewModels
             this.series = series;
         }
 
+        public int Chapter => selectedChapterIndex + 1;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
         [NotifyPropertyChangedFor(nameof(CurrentChapter))]
-        private int chapter = 1;
+        [NotifyPropertyChangedFor(nameof(Chapter))]
+        private int selectedChapterIndex = 0;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
@@ -33,7 +36,7 @@ namespace Kotomi.ViewModels
             Source = CurrentChapter.GetPage(page)
         };
 
-        public IChapter CurrentChapter => series.Chapters[chapter - 1];
+        public IChapter CurrentChapter => series.Chapters[SelectedChapterIndex];
 
         public void SwitchToLibraryView() => MainView.NavigateTo(new LibraryViewModel());
 
