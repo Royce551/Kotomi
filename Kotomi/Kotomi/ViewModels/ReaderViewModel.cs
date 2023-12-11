@@ -49,5 +49,10 @@ namespace Kotomi.ViewModels
         {
             Page++;
         }
+
+        [ObservableProperty]
+        private bool isMenuBarShown = true;
+
+        public void ShowMenuBar() => IsMenuBarShown = true;
     }
 }

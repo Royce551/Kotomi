@@ -8,7 +8,7 @@
              x:Class="Kotomi.Views.ReaderView" Background="{DynamicResource BackgroundColor}"
              x:DataType="vm:ReaderViewModel">
   <DockPanel>
-    <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}">
+    <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}" IsVisible="{Binding IsMenuBarShown}">
       <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}" LastChildFill="False">
         <Button Margin="5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Library</Button>
         <StackPanel DockPanel.Dock="Left" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -45,7 +45,8 @@
                 <RadioButton>Fit width</RadioButton>
                 <RadioButton>Don't scale</RadioButton>
 
-                <Button Content="Enter immersive mode"/>
+                <CheckBox Margin="0,10,0,0" Content="Show menu bar" IsChecked="{Binding IsMenuBarShown}" HotKey="F11"/>
+                <CheckBox Content="Fullscreen"/>
               </StackPanel>
             </Flyout>
           </Button.Flyout>
@@ -66,6 +67,7 @@
       <Grid ColumnDefinitions="0.5*,0.5*">
         <Button Grid.Column="0" Command="{Binding PageLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="Left"/>
         <Button Grid.Column="1" Command="{Binding PageRight}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="Right"/>
+        <Button Grid.Column="1" Command="{Binding ShowMenuBar}" HorizontalAlignment="Right" Margin="10" Content="Show menu bar" VerticalAlignment="Top" Opacity="0.1" IsVisible="{Binding !IsMenuBarShown}"/>
       </Grid>
     </Panel>
   </DockPanel>
