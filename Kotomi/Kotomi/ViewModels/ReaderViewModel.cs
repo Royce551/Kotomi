@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
@@ -39,7 +40,15 @@ namespace Kotomi.ViewModels
         {
             get
             {
-                if (ReadingModeSingle) return new Image() { Source = CurrentChapter.GetPage(page) };
+                if (ReadingModeSingle)
+                {
+                    var image = new Image() { Source = CurrentChapter.GetPage(page) };
+
+                    image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
+
+                    return image;
+                }
+                
                 if (ReadingModeTwo)
                 {
                     var grid = new Grid() { ColumnDefinitions = new("*,*") };
@@ -47,6 +56,13 @@ namespace Kotomi.ViewModels
                     {
                         Source = CurrentChapter.GetPage(page),
                     };
+
+                    leftImage.Bind(Image.MarginProperty, new Binding
+                    {
+                        Source = MainView,
+                        Path = nameof(MainView.SafeAreaLeft)
+                    });
+
                     if (ReadingDirectionLeftToRight) Grid.SetColumn(leftImage, 0);
                     else Grid.SetColumn(leftImage, 1);
                     grid.Children.Add(leftImage);
@@ -58,16 +74,36 @@ namespace Kotomi.ViewModels
                     if (ReadingDirectionLeftToRight) Grid.SetColumn(rightImage, 1);
                     else Grid.SetColumn(rightImage, 0);
                     grid.Children.Add(rightImage);
+
+                    grid.Bind(Grid.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
+
                     return grid;
                 }
                 if (ReadingModeLong)
                 {
                     var scrollViewer = new ScrollViewer();
-                    var stackPanel = new StackPanel();
+                    var stackPanel = new StackPanel { Spacing = 5 };
                     for (int i = 1; i < CurrentChapter.TotalPages; i++)
                     {
                         var imageSource = CurrentChapter.GetPage(i);
-                        stackPanel.Children.Add(new Image() { Source = imageSource, MaxHeight = imageSource.Size.Height, Margin = new(0, 5) });
+                        var image = new Image() { Source = imageSource, MaxHeight = imageSource.Size.Height };
+
+                        if (i == 1)
+                        {
+                            image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) });
+                        }
+                        else if (i == CurrentChapter.TotalPages)
+                        {
+                            image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) });
+                        }
+                        else
+                        {
+                            image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) });
+                        }
+
+                        stackPanel.Children.Add(image);
+
+                        
                     }
                     scrollViewer.Content = stackPanel;
                     return scrollViewer;
