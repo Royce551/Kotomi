@@ -14,10 +14,10 @@
         <StackPanel DockPanel.Dock="Left" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
           <TextBlock Margin="10,0,0,0" Text="Chapter" VerticalAlignment="Center"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Chapter}" VerticalAlignment="Center"/>
-          <TextBlock Margin="10,0,0,0" Text="Page" VerticalAlignment="Center"/>
-          <TextBlock Margin="5,0,0,0" Text="{Binding Page}" VerticalAlignment="Center"/>
-          <TextBlock Margin="5,0,0,0" Text="/" VerticalAlignment="Center"/>
-          <TextBlock Margin="5,0,0,0" Text="{Binding CurrentChapter.TotalPages}" VerticalAlignment="Center"/>
+          <TextBlock Margin="10,0,0,0" Text="Page" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
+          <TextBlock Margin="5,0,0,0" Text="{Binding Page}" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
+          <TextBlock Margin="5,0,0,0" Text="/" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
+          <TextBlock Margin="5,0,0,0" Text="{Binding CurrentChapter.TotalPages}" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
         </StackPanel>
         <Button Margin="5" DockPanel.Dock="Right" Content="Menu">
           <Button.Flyout>
@@ -32,18 +32,13 @@
                   </ComboBox.ItemTemplate>
                 </ComboBox>
                 <TextBlock Text="Reading Mode" FontWeight="Bold"/>
-                <RadioButton>Single page</RadioButton>
-                <RadioButton>Two pages</RadioButton>
-                <RadioButton>Long strip</RadioButton>
+                <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeSingle}">Single page</RadioButton>
+                <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeTwo}">Two pages</RadioButton>
+                <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeLong}">Long strip</RadioButton>
 
                 <TextBlock Text="Reading Direction" FontWeight="Bold"/>
-                <RadioButton>Left to right</RadioButton>
-                <RadioButton>Right to left</RadioButton>
-
-                <TextBlock Text="Image Fit" FontWeight="Bold"/>
-                <RadioButton>Fit height</RadioButton>
-                <RadioButton>Fit width</RadioButton>
-                <RadioButton>Don't scale</RadioButton>
+                <RadioButton GroupName="ReadingDirection" IsChecked="{Binding ReadingDirectionLeftToRight}">Left to right</RadioButton>
+                <RadioButton GroupName="ReadingDirection" IsChecked="{Binding ReadingDirectionRightToLeft}">Right to left</RadioButton>
 
                 <CheckBox Margin="0,10,0,0" Content="Show menu bar" IsChecked="{Binding IsMenuBarShown}" HotKey="F11"/>
                 <CheckBox Content="Fullscreen"/>
@@ -64,10 +59,11 @@
         </TransitioningContentControl.PageTransition>
       </TransitioningContentControl>
 
-      <Grid ColumnDefinitions="0.5*,0.5*">
-        <Button Grid.Column="0" Command="{Binding PageLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="Left"/>
-        <Button Grid.Column="1" Command="{Binding PageRight}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="Right"/>
-        <Button Grid.Column="1" Command="{Binding ShowMenuBar}" HorizontalAlignment="Right" Margin="10" Content="Show menu bar" VerticalAlignment="Top" Opacity="0.1" IsVisible="{Binding !IsMenuBarShown}"/>
+      <Grid ColumnDefinitions="*,*,*">
+        <Button Grid.Column="0" Command="{Binding PageLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="Left" IsVisible="{Binding !ReadingModeLong}"/>
+        <Button Grid.Column="1" Command="{Binding ShowHideMenuBar}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="F11" IsVisible="{Binding !ReadingModeLong}"/>
+        <Button Grid.Column="2" Command="{Binding PageRight}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" HotKey="Right" IsVisible="{Binding !ReadingModeLong}"/>
+        <Button Grid.Column="2" Command="{Binding ShowHideMenuBar}" Content="Show/hide menu" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Opacity="0.25" IsVisible="{Binding ReadingModeLong}"/>
       </Grid>
     </Panel>
   </DockPanel>
