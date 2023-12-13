@@ -1,7 +1,8 @@
 ﻿using Kotomi.Models.Series;
-using LiteDB;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,18 +11,18 @@ namespace Kotomi.Models.Library
 {
     public class Library
     {
-        public LiteDatabase Database { get; private set; }
-
         public const string SeriesCollectionName = "Series";
 
-        public Library(LiteDatabase database)
+        private string filePath;
+
+        public Library(string filePath)
         {
-            Database = database;
+            this.filePath = filePath;
         }
 
         public List<ISeries> GetAllSeries()
         {
-            var series = Database.GetCollection<DatabaseSeries>(SeriesCollectionName).Query().ToList();
+            var series = Read();
 
             var concreteSeries = new List<ISeries>();
             foreach (var x in series)
@@ -29,13 +30,44 @@ namespace Kotomi.Models.Library
                 concreteSeries.Add(SeriesLocator.GetSeriesForPrefixedURL(x.URL));
             }
 
-
             return concreteSeries;
         }
 
         public void Import(string url)
         {
-            Database.GetCollection<DatabaseSeries>(SeriesCollectionName).Insert(new DatabaseSeries(SeriesLocator.GetSeriesForPrefixedURL(url), url));
+            var x = GetAllSeries();
+            var a = SeriesLocator.GetSeriesForPrefixedURL(url);
+            a.URL = url;
+            x.Add(a);
+
+            var z = new List<DatabaseSeries>();
+            foreach (var y in x)
+            {
+                z.Add(new DatabaseSeries(y, y.URL));
+            }
+
+            Write(z);
+        }
+
+        public List<DatabaseSeries> Read()
+        {
+            if (!File.Exists(Path.Combine(filePath, "library.json")))
+            {
+                Write(new List<DatabaseSeries>());
+            }
+            using (StreamReader file = File.OpenText(Path.Combine(filePath, "library.json")))
+            {
+                var jsonSerializer = new JsonSerializer();
+                return (List<DatabaseSeries>)jsonSerializer.Deserialize(file, typeof(List<DatabaseSeries>));
+            }
+        }
+        public void Write(List<DatabaseSeries> config)
+        {
+            if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+            using (StreamWriter file = File.CreateText(Path.Combine(filePath, "library.json")))
+            {
+                new JsonSerializer().Serialize(file, config);
+            }
         }
     }
 
@@ -49,6 +81,7 @@ namespace Kotomi.Models.Library
 
         public string URL { get; set; }
 
+        [JsonConstructor]
         public DatabaseSeries(string title, byte[] cover, string url)
         {
             Title = title;

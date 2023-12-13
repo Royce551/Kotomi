@@ -11,7 +11,9 @@ namespace Kotomi.Models.Series
     {
         public string? Title { get; }
 
-        public byte[]? Cover { get;}
+        public byte[]? Cover { get; }
+
+        public string? URL { get; set; }
 
         public IChapter[]? Chapters { get; }
     }

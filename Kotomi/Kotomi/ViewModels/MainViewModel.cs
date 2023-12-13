@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Library;
-using LiteDB;
 using System;
 using System.IO;
 
@@ -42,9 +41,7 @@ namespace Kotomi.ViewModels
             {
                 var dataFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Squidhouse Software", "Kotomi");
                 Directory.CreateDirectory(dataFolderPath);
-
-                var database = new LiteDatabase($"Filename=\"{Path.Combine(dataFolderPath, "database.kdb1")}\";Connection=shared"); ;
-                Library = new Library(database);
+                Library = new Library(dataFolderPath);
             }
             
 

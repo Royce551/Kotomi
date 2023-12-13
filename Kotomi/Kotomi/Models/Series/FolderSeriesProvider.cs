@@ -42,6 +42,8 @@ namespace Kotomi.Models.Series
     {
         public string? Title { get; set; }
 
+        public string URL { get; set; }
+
         public byte[]? Cover { get; set; }
 
         public IChapter[]? Chapters { get; set; }
