@@ -11,7 +11,7 @@ namespace Kotomi.Models.Series
     {
         public string? Title { get; }
 
-        public Bitmap? Cover { get;}
+        public byte[]? Cover { get;}
 
         public IChapter[]? Chapters { get; }
     }
@@ -22,6 +22,6 @@ namespace Kotomi.Models.Series
 
         public int? TotalPages { get; }
 
-        public Bitmap GetPage(int pageNumber);
+        public Bitmap GetPageAsBitmap(int pageNumber);
     }
 }

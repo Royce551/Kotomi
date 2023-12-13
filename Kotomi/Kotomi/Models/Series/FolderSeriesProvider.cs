@@ -12,13 +12,15 @@ namespace Kotomi.Models.Series
     {
         public string Name => "Folder Series Provider";
 
+        public string Prefix => "folder";
+
         public ISeries GetSeriesForURL(string url)
         {
             var chapterDirectories = Directory.GetDirectories(url, "*", SearchOption.TopDirectoryOnly);
 
             var series = new FolderSeries();
             series.Title = Path.GetFileName(url);
-            series.Cover = new Bitmap(Path.Combine(url, "cover.jpg"));
+            series.Cover = File.ReadAllBytes(Path.Combine(url, "cover.jpg"));
 
             var chapters = new List<FolderChapter>();
             foreach (var directory in chapterDirectories)
@@ -39,7 +41,9 @@ namespace Kotomi.Models.Series
     public class FolderSeries : ISeries
     {
         public string? Title { get; set; }
-        public Bitmap? Cover { get; set; }
+
+        public byte[]? Cover { get; set; }
+
         public IChapter[]? Chapters { get; set; }
     }
 
@@ -50,6 +54,6 @@ namespace Kotomi.Models.Series
 
         public List<string> Pages { get; set; } = default!;
 
-        public Bitmap GetPage(int pageNumber) => new Bitmap(Pages[pageNumber - 1]);
+        public Bitmap GetPageAsBitmap(int pageNumber) => new Bitmap(Pages[pageNumber - 1]);
     }
 }

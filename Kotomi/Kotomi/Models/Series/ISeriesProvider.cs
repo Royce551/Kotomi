@@ -10,6 +10,8 @@ namespace Kotomi.Models.Series
     {
         public string Name { get; }
 
+        public string Prefix { get; }
+
         public ISeries GetSeriesForURL(string url);
     }
 }

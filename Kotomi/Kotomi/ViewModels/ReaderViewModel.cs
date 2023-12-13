@@ -42,7 +42,7 @@ namespace Kotomi.ViewModels
             {
                 if (ReadingModeSingle)
                 {
-                    var image = new Image() { Source = CurrentChapter.GetPage(page) };
+                    var image = new Image() { Source = CurrentChapter.GetPageAsBitmap(page) };
 
                     image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
 
@@ -54,7 +54,7 @@ namespace Kotomi.ViewModels
                     var grid = new Grid() { ColumnDefinitions = new("*,*") };
                     var leftImage = new Image()
                     {
-                        Source = CurrentChapter.GetPage(page),
+                        Source = CurrentChapter.GetPageAsBitmap(page),
                     };
 
                     leftImage.Bind(Image.MarginProperty, new Binding
@@ -69,7 +69,7 @@ namespace Kotomi.ViewModels
 
                     var rightImage = new Image()
                     {
-                        Source = CurrentChapter.GetPage(page + 1),
+                        Source = CurrentChapter.GetPageAsBitmap(page + 1),
                     };
                     if (ReadingDirectionLeftToRight) Grid.SetColumn(rightImage, 1);
                     else Grid.SetColumn(rightImage, 0);
@@ -85,7 +85,7 @@ namespace Kotomi.ViewModels
                     var stackPanel = new StackPanel { Spacing = 5 };
                     for (int i = 1; i < CurrentChapter.TotalPages; i++)
                     {
-                        var imageSource = CurrentChapter.GetPage(i);
+                        var imageSource = CurrentChapter.GetPageAsBitmap(i);
                         var image = new Image() { Source = imageSource, MaxHeight = imageSource.Size.Height };
 
                         if (i == 1)
