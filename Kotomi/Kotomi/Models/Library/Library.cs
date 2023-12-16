@@ -35,15 +35,15 @@ namespace Kotomi.Models.Library
 
         public void Import(string url)
         {
-            var x = GetAllSeries();
-            var a = SeriesLocator.GetSeriesForPrefixedURL(url);
-            a.URL = url;
-            x.Add(a);
+            var allSeries = GetAllSeries();
+            var concreteSeries = SeriesLocator.GetSeriesForPrefixedURL(url);
+            concreteSeries.URL = url;
+            allSeries.Add(concreteSeries);
 
             var z = new List<DatabaseSeries>();
-            foreach (var y in x)
+            foreach (var series in allSeries)
             {
-                z.Add(new DatabaseSeries(y, y.URL));
+                z.Add(new DatabaseSeries(series));
             }
 
             Write(z);
@@ -77,23 +77,19 @@ namespace Kotomi.Models.Library
 
         public string Title { get; set; }
 
-        public byte[] Cover { get; set; }
-
         public string URL { get; set; }
 
         [JsonConstructor]
-        public DatabaseSeries(string title, byte[] cover, string url)
+        public DatabaseSeries(string title, string url)
         {
             Title = title;
-            Cover = cover;
             URL = url;
         }
 
-        public DatabaseSeries(ISeries series, string url)
+        public DatabaseSeries(ISeries series)
         {
             Title = series.Title!;
-            Cover = series.Cover!;
-            URL = url;
+            URL = series.URL!;
         }
     }
 }

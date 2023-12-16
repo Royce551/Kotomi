@@ -4,21 +4,60 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Kotomi.ViewModels;assembly=Kotomi"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kotomi.Views.LibraryView"
+             x:Class="Kotomi.Views.LibraryView" Background="{DynamicResource BackgroundColor}"
              x:DataType="vm:LibraryViewModel">
-  <StackPanel Margin="{Binding MainView.SafeArea}" Spacing="5">
-    <ListBox ItemsSource="{Binding AllSeries}" SelectedItem="{Binding SelectedSeries}">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Spacing="2">
-            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-          </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+  <UserControl.Resources>
+    <vm:ByteArrayToBitmapConverter x:Key="byteArrayToBitmapConverter"/>
+  </UserControl.Resources>
 
-    <Button Command="{Binding OpenSelectedSeries}">Open selected series</Button>
-    <Button Command="{Binding UpdateLibrary}">Update library</Button>
-    <Button Click="Button_Click">Add to library</Button>
-  </StackPanel>
+  <ScrollViewer>
+      <StackPanel>
+        <Border Background="{DynamicResource ForegroundColor}">
+          <Panel Margin="{Binding MainView.SafeAreaLeftTopRight}">
+             <TextBlock Text="Library" FontSize="32" FontWeight="Bold" Margin="10"/>
+          </Panel>
+        </Border>
+        <Border Background="{DynamicResource SecondaryColor}">
+          <StackPanel Margin="10">
+            <TextBlock Text="Reading Now" FontSize="22" FontWeight="Bold"/>
+            <ItemsControl ItemsSource="{Binding AllSeries}" Margin="0,10,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Command="{Binding Open}">
+                    <StackPanel Spacing="2" Width="200">
+                      <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}"/>
+                      <TextBlock Text="{Binding Title}" FontSize="12" TextWrapping="Wrap"/>
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+        <ItemsControl ItemsSource="{Binding AllSeries}" Margin="10">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Command="{Binding Open}">
+                <StackPanel Spacing="2" Width="200">
+                  <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}"/>
+                  <TextBlock Text="{Binding Title}" FontSize="12" TextWrapping="Wrap"/>
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <Button Margin="10,10,0,0" Click="Button_Click">Add to library</Button>
+      </StackPanel>
+  </ScrollViewer>
 </UserControl>
