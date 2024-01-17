@@ -10,6 +10,7 @@ namespace Kotomi.ViewModels
     public partial class MainViewModel : ViewModelBase
     {
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNavbarVisible))]
         private PageViewModelBase? selectedView;
 
         [ObservableProperty]
@@ -32,6 +33,8 @@ namespace Kotomi.ViewModels
         public Thickness SafeAreaLeftBottomRight => new(SafeArea.Left, 0, SafeArea.Right, SafeArea.Bottom);
         public Thickness SafeAreaTopRight => new(0, SafeArea.Top, SafeArea.Right, 0);
         public Thickness SafeAreaLeftRight => new(SafeArea.Left, 0, SafeArea.Right, 0);
+
+        public bool IsNavbarVisible => SelectedView is not ReaderViewModel;
 
         public Library Library { get; private set; }
 

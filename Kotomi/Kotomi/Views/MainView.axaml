@@ -12,14 +12,23 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <TransitioningContentControl Content="{Binding SelectedView}">
-    <TransitioningContentControl.PageTransition>
-      <!--<PageSlide Orientation="Vertical" Duration="0:00:00.200" SlideOutEasing="ExponentialEaseOut" SlideInEasing="ExponentialEaseIn"/>-->
-      <CompositePageTransition>
-        <CrossFade Duration="0:00:00.1"/>
-        <PageSlide Orientation="Vertical" Duration="0:00:00.3" SlideInEasing="QuadraticEaseOut" SlideOutEasing="QuadraticEaseIn"/>
-      </CompositePageTransition>
-    </TransitioningContentControl.PageTransition>
-  </TransitioningContentControl>
-
+  <DockPanel>
+    <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}" IsVisible="{Binding IsNavbarVisible}">
+      <Panel Margin="{Binding SafeAreaLeftTopRight}">
+        <StackPanel Margin="10,5" Spacing="15" Orientation="Horizontal">
+          <TextBlock Text="Library" FontWeight="Bold"/>
+          <TextBlock Text="Browse"/>
+          <TextBlock Text="Settings"/>
+        </StackPanel>
+      </Panel>
+    </Panel>
+    <TransitioningContentControl Content="{Binding SelectedView}">
+      <TransitioningContentControl.PageTransition>
+        <CompositePageTransition>
+          <CrossFade Duration="0:00:00.1"/>
+          <PageSlide Orientation="Vertical" Duration="0:00:00.3" SlideInEasing="QuadraticEaseOut" SlideOutEasing="QuadraticEaseIn"/>
+        </CompositePageTransition>
+      </TransitioningContentControl.PageTransition>
+    </TransitioningContentControl>
+  </DockPanel>
 </UserControl>
