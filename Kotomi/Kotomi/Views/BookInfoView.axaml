@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Kotomi.ViewModels;assembly=Kotomi"
+             xmlns:ms="clr-namespace:Kotomi.Models.Series;assembly=Kotomi"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Kotomi.Views.BookInfoView" Background="{DynamicResource BackgroundColor}"
+             x:DataType="vm:BookInfoViewModel">
+  <UserControl.Resources>
+    <vm:ByteArrayToBitmapConverter x:Key="byteArrayToBitmapConverter"/>
+  </UserControl.Resources>
+  <ScrollViewer>
+    <StackPanel>
+      <Panel Height="430">
+        <DockPanel ZIndex="2" Margin="{Binding MainView.SafeAreaLeftTopRight}">
+          <Button DockPanel.Dock="Top" Content="Back" Margin="20" Command="{Binding Back}"/>
+          <Image Source="{Binding Series.Cover, Converter={StaticResource byteArrayToBitmapConverter}}" Width="250" DockPanel.Dock="Left" Margin="20,20,0,10"/>
+          <DockPanel Margin="10,20,0,0">
+            <TextBlock DockPanel.Dock="Top" Text="{Binding Series.Title}" FontSize="48" TextWrapping="Wrap" FontWeight="Bold"/>
+            <TextBlock DockPanel.Dock="Top" Text="namo"/>
+
+            <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,10" Spacing="10" Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
+              <Button Content="Start reading" Command="{Binding StartReading}"/>
+              <Button Content="Remove from library" Command="{Binding AddRemoveLibrary}"/>
+            </StackPanel>
+          </DockPanel>
+        </DockPanel>
+        <Image ZIndex="0" Source="{Binding Series.Cover, Converter={StaticResource byteArrayToBitmapConverter}}" Opacity="0.30" Stretch="UniformToFill">
+          <Image.Effect>
+            <BlurEffect Radius="50"/>
+          </Image.Effect>
+        </Image>
+      </Panel>
+
+      <Panel Margin="{Binding MainView.SafeAreaLeftBottomRight}">
+        <DockPanel Margin="20">
+          <StackPanel DockPanel.Dock="Left" MaxWidth="250">
+            <TextBlock Text="Description" FontSize="18" FontWeight="Bold"/>
+            <TextBlock TextWrapping="Wrap" Text="Space for a description Space for a description Space for a description Space for a description Space for a description Space for a description Space for a description"/>
+            <TextBlock Margin="0,10,0,0" Text="Genres" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="drama, slice of life"/>
+            <TextBlock Margin="0,10,0,0" Text="Tags" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="crossdressing, school life"/>
+            <TextBlock Margin="0,10,0,0" Text="Demographic" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="Shounen"/>
+            <TextBlock Margin="0,10,0,0" Text="Source" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="Local folder"/>
+          </StackPanel>
+
+          <StackPanel Margin="20,0,0,0">
+            <ListBox ItemsSource="{Binding Series.Chapters}">
+              <ListBox.ItemTemplate>
+                <DataTemplate DataType="ms:FolderChapter">
+                  <TextBlock Text="{Binding Title}"/>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </StackPanel>
+        </DockPanel>
+      </Panel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -29,12 +29,6 @@ namespace Kotomi.ViewModels
             AllSeries = new(MainView.Library.GetAllSeries().Select(x => new SeriesViewModel(this, x)));
         }
 
-        public void OpenSeries(object parameter)
-        {
-            if (parameter is ISeries series)
-             MainView.NavigateTo(new ReaderViewModel(series));
-        }
-
         public void Import(string url)
         {
             MainView.Library.Import($"folder://{url}");
@@ -61,7 +55,7 @@ namespace Kotomi.ViewModels
 
         public void Open()
         {
-            library.MainView.NavigateTo(new ReaderViewModel(this));
+            library.MainView.NavigateTo(new BookInfoViewModel(this, library));
         }
     }
 

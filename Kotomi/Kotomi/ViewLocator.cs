@@ -20,7 +20,7 @@ namespace Kotomi
                 return (Control)Activator.CreateInstance(type)!;
             }
 
-            return new TextBlock { Text = name };
+            return new TextBlock { Text = $"Could not find page {name} :(" };
         }
 
         public bool Match(object? data)
