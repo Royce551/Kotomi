@@ -18,9 +18,10 @@ namespace Kotomi.ViewModels
         [ObservableProperty]
         private ISeries series;
 
-        public ReaderViewModel(ISeries series)
+        public ReaderViewModel(ISeries series, int initialChapterIndex = 0)
         {
             this.series = series;
+            SelectedChapterIndex = initialChapterIndex;
         }
 
         public int Chapter => selectedChapterIndex + 1;

@@ -19,7 +19,7 @@
                 <ItemsControl ItemsSource="{Binding AllSeries}" Margin="0,10,0,0">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                      <Button Command="{Binding Open}">
+                      <Button Command="{Binding Open}" Margin="0,0,10,10">
                         <StackPanel Spacing="2" Width="200">
                           <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}"/>
                           <TextBlock Text="{Binding Title}" FontSize="12" TextWrapping="Wrap"/>

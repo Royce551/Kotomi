@@ -49,13 +49,15 @@
           </StackPanel>
 
           <StackPanel Margin="20,0,0,0">
-            <ListBox ItemsSource="{Binding Series.Chapters}">
-              <ListBox.ItemTemplate>
-                <DataTemplate DataType="ms:FolderChapter">
-                  <TextBlock Text="{Binding Title}"/>
+            <ItemsControl ItemsSource="{Binding AllChapters}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Command="{Binding Open}" HorizontalAlignment="Stretch">
+                    <TextBlock Text="{Binding Title}"/>
+                  </Button>
                 </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
           </StackPanel>
         </DockPanel>
       </Panel>
