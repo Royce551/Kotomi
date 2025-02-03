@@ -22,6 +22,10 @@ namespace Kotomi.Models.Series
     {
         public string? Title { get; }
 
+        public int? VolumeNumber { get; }
+
+        public int? ChapterNumber { get; }
+
         public int? TotalPages { get; }
 
         public Bitmap GetPageAsBitmap(int pageNumber);

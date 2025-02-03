@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Kotomi.Models.Series
@@ -23,16 +24,42 @@ namespace Kotomi.Models.Series
             series.Cover = File.ReadAllBytes(Path.Combine(url, "cover.jpg"));
 
             var chapters = new List<FolderChapter>();
-            foreach (var directory in chapterDirectories)
+
+            var volumeRegex = new Regex("[Vv]ol[^\\d]+(\\d+)");
+            var chapterRegex = new Regex("[Cc]h.+(\\d+)");
+            if (!chapterDirectories.Any(x => !chapterRegex.IsMatch(x)))
             {
-                var chapter = new FolderChapter();
-                chapter.Title = Path.GetFileName(directory);
-                var pages = Directory.GetFiles(directory).ToList();
-                pages.Sort();
-                chapter.Pages = pages;
-                chapters.Add(chapter);
+                foreach (var directory in chapterDirectories)
+                {
+                    var volumeMatch = volumeRegex.Match(directory);
+                    var chapterMatch = chapterRegex.Match(directory);
+
+                    var chapter = new FolderChapter();
+                    chapter.Title = Path.GetFileName(directory);
+                    var pages = Directory.GetFiles(directory).ToList();
+                    pages.Sort();
+                    chapter.Pages = pages;
+
+                    if (volumeMatch.Success) chapter.VolumeNumber = int.Parse(volumeMatch.Groups[1].Value);
+                    chapter.ChapterNumber = int.Parse(chapterMatch.Groups[1].Value);
+
+                    chapters.Add(chapter);
+                }
             }
-            series.Chapters = chapters.ToArray();
+            else
+            {
+                foreach (var directory in chapterDirectories)
+                {
+                    var chapter = new FolderChapter();
+                    chapter.Title = Path.GetFileName(directory);
+                    var pages = Directory.GetFiles(directory).ToList();
+                    pages.Sort();
+                    chapter.Pages = pages;
+                    chapters.Add(chapter);
+                }
+            }
+            
+            series.Chapters = chapters.OrderBy(x => x.VolumeNumber).ThenBy(x => x.ChapterNumber).ToArray();
 
             return series;
         }
@@ -52,7 +79,11 @@ namespace Kotomi.Models.Series
     public class FolderChapter : IChapter
     {
         public string? Title { get; set; }
-        public int? TotalPages => Pages.Count + 1;
+        public int? TotalPages => Pages.Count;
+
+        public int? VolumeNumber { get; set; }
+
+        public int? ChapterNumber { get; set; }
 
         public List<string> Pages { get; set; } = default!;
 
