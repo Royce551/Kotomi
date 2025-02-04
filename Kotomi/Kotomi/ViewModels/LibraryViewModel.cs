@@ -36,22 +36,18 @@ namespace Kotomi.ViewModels
         }
     }
 
-    public class SeriesViewModel : ISeries
+    public class SeriesViewModel(LibraryViewModel _library, ISeries series) : ISeries
     {
-        public string? Title { get; }
-        public byte[]? Cover { get; }
+        public string? Title => series.Title;
+        public byte[]? Cover => series.Cover;
         public string? URL { get; set; }
-        public IChapter[]? Chapters { get; }
+        public IChapter[] Chapters => series.Chapters;
+        public string? Description => series.Description;
+        public string[]? Genres => series.Genres;
+        public string[]? Tags => series.Tags;
+        public string? Demographic => series.Demographic;
 
-        private readonly LibraryViewModel library;
-        public SeriesViewModel(LibraryViewModel library, ISeries series)
-        {
-            this.library = library;
-            Title = series.Title;
-            Cover = series.Cover;
-            URL = series.URL;
-            Chapters = series.Chapters;
-        }
+        private LibraryViewModel library => _library;
 
         public void Open()
         {

@@ -15,7 +15,15 @@ namespace Kotomi.Models.Series
 
         public string? URL { get; set; }
 
-        public IChapter[]? Chapters { get; }
+        public string? Description { get; }
+
+        public string[]? Genres { get; }
+
+        public string[]? Tags { get; }
+
+        public string? Demographic { get; }
+
+        public IChapter[] Chapters { get; }
     }
 
     public interface IChapter

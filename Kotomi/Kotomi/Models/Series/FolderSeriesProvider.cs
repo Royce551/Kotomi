@@ -11,17 +11,13 @@ namespace Kotomi.Models.Series
 {
     public class FolderSeriesProvider : ISeriesProvider
     {
-        public string Name => "Folder Series Provider";
+        public string Name => "Local Folder";
 
         public string Prefix => "folder";
 
         public ISeries GetSeriesForURL(string url)
         {
             var chapterDirectories = Directory.GetDirectories(url, "*", SearchOption.TopDirectoryOnly);
-
-            var series = new FolderSeries();
-            series.Title = Path.GetFileName(url);
-            series.Cover = File.ReadAllBytes(Path.Combine(url, "cover.jpg"));
 
             var chapters = new List<FolderChapter>();
 
@@ -58,22 +54,33 @@ namespace Kotomi.Models.Series
                     chapters.Add(chapter);
                 }
             }
-            
-            series.Chapters = chapters.OrderBy(x => x.VolumeNumber).ThenBy(x => x.ChapterNumber).ToArray();
+
+            var series = new FolderSeries(Path.GetFileName(url), chapters.OrderBy(x => x.VolumeNumber).ThenBy(x => x.ChapterNumber).ToArray())
+            {
+                Cover = File.ReadAllBytes(Path.Combine(url, "cover.jpg"))
+            };
 
             return series;
         }
     }
 
-    public class FolderSeries : ISeries
+    public class FolderSeries(string title, IChapter[] chapters) : ISeries
     {
-        public string? Title { get; set; }
+        public string? Title => title;
 
-        public string URL { get; set; }
+        public string? URL { get; set; }
 
-        public byte[]? Cover { get; set; }
+        public string? Description { get; init; }
 
-        public IChapter[]? Chapters { get; set; }
+        public string[]? Genres { get; init; }
+
+        public string[]? Tags { get; init; }
+
+        public string? Demographic { get; init; }
+
+        public byte[]? Cover { get; init; }
+
+        public IChapter[] Chapters => chapters;
     }
 
     public class FolderChapter : IChapter
