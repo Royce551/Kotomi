@@ -12,8 +12,12 @@
       <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}" LastChildFill="False">
         <Button Margin="5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Library</Button>
         <StackPanel DockPanel.Dock="Left" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Margin="10,0,0,0" Text="Volume" VerticalAlignment="Center" IsVisible="{Binding ShowVolume}"/>
+          <TextBlock Margin="5,0,0,0" Text="{Binding Volume}" VerticalAlignment="Center" IsVisible="{Binding ShowVolume}"/>
+          
           <TextBlock Margin="10,0,0,0" Text="Chapter" VerticalAlignment="Center"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Chapter}" VerticalAlignment="Center"/>
+          
           <TextBlock Margin="10,0,0,0" Text="Page" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Page}" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
           <TextBlock Margin="5,0,0,0" Text="/" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>

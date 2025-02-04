@@ -23,13 +23,18 @@ namespace Kotomi.ViewModels
             this.series = series;
             SelectedChapterIndex = initialChapterIndex;
         }
+ 
+        public int? Volume => CurrentChapter.VolumeNumber;
+        public bool ShowVolume => Volume != null;
 
-        public int Chapter => selectedChapterIndex + 1;
+        public int Chapter => CurrentChapter.ChapterNumber is null ? SelectedChapterIndex + 1 : (int)CurrentChapter.ChapterNumber;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
         [NotifyPropertyChangedFor(nameof(CurrentChapter))]
         [NotifyPropertyChangedFor(nameof(Chapter))]
+        [NotifyPropertyChangedFor(nameof(Volume))]
+        [NotifyPropertyChangedFor(nameof(ShowVolume))]
         private int selectedChapterIndex = 0;
 
         [ObservableProperty]
