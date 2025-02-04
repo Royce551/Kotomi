@@ -18,7 +18,7 @@
           <Image Source="{Binding Series.Cover, Converter={StaticResource byteArrayToBitmapConverter}}" Width="250" DockPanel.Dock="Left" Margin="20,20,0,10"/>
           <DockPanel Margin="10,20,0,0">
             <TextBlock DockPanel.Dock="Top" Text="{Binding Series.Title}" FontSize="48" TextWrapping="Wrap" FontWeight="Bold"/>
-            <TextBlock DockPanel.Dock="Top" Text="namo"/>
+            <TextBlock DockPanel.Dock="Top" Text="{Binding Series.Author}"/>
 
             <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,10" Spacing="10" Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
               <Button Content="Start reading" Command="{Binding StartReading}"/>
@@ -36,16 +36,20 @@
       <Panel Margin="{Binding MainView.SafeAreaLeftBottomRight}">
         <DockPanel Margin="20">
           <StackPanel DockPanel.Dock="Left" MaxWidth="250">
-            <TextBlock Text="Description" FontSize="18" FontWeight="Bold"/>
-            <TextBlock TextWrapping="Wrap" Text="Space for a description Space for a description Space for a description Space for a description Space for a description Space for a description Space for a description"/>
-            <TextBlock Margin="0,10,0,0" Text="Genres" FontSize="18" FontWeight="Bold"/>
-            <TextBlock Text="drama, slice of life"/>
-            <TextBlock Margin="0,10,0,0" Text="Tags" FontSize="18" FontWeight="Bold"/>
-            <TextBlock Text="crossdressing, school life"/>
-            <TextBlock Margin="0,10,0,0" Text="Demographic" FontSize="18" FontWeight="Bold"/>
-            <TextBlock Text="Shounen"/>
-            <TextBlock Margin="0,10,0,0" Text="Source" FontSize="18" FontWeight="Bold"/>
-            <TextBlock Text="Local folder"/>
+            <TextBlock Text="Description" FontSize="18" FontWeight="Bold" IsVisible="{Binding ShowDescription}"/>
+            <TextBlock Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding Description}" IsVisible="{Binding ShowDescription}"/>
+            
+            <TextBlock Text="Genres" FontSize="18" FontWeight="Bold" IsVisible="{Binding ShowGenres}"/>
+            <TextBlock Margin="0,0,0,10" Text="{Binding Genres}" IsVisible="{Binding ShowGenres}"/>
+            
+            <TextBlock Text="Tags" FontSize="18" FontWeight="Bold" IsVisible="{Binding ShowTags}"/>
+            <TextBlock Margin="0,0,0,10" Text="{Binding Tags}" IsVisible="{Binding ShowTags}"/>
+            
+            <TextBlock Text="Demographic" FontSize="18" FontWeight="Bold" IsVisible="{Binding ShowDemographic}"/>
+            <TextBlock Margin="0,0,0,10" Text="{Binding Demographic}" IsVisible="{Binding ShowDemographic}"/>
+            
+            <TextBlock Text="Source" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Margin="0,0,0,10" Text="{Binding Source}"/>
           </StackPanel>
 
           <StackPanel Margin="20,0,0,0">

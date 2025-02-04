@@ -38,7 +38,9 @@ namespace Kotomi.ViewModels
 
     public class SeriesViewModel(LibraryViewModel _library, ISeries series) : ISeries
     {
+        public string Source => series.Source;
         public string? Title => series.Title;
+        public string? Author => series.Author;
         public byte[]? Cover => series.Cover;
         public string? URL { get; set; }
         public IChapter[] Chapters => series.Chapters;

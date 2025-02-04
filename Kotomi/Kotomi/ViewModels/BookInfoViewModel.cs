@@ -17,6 +17,20 @@ namespace Kotomi.ViewModels
     {
         public ISeries Series { get; }
 
+        public string? Description => Series.Description;
+        public bool ShowDescription => Description != null;
+
+        public string? Genres => Series.Genres != null ? string.Join(", ", Series.Genres) : string.Empty;
+        public bool ShowGenres => !string.IsNullOrEmpty(Genres);
+
+        public string? Tags => Series.Tags != null ? string.Join(", ", Series.Tags) : string.Empty;
+        public bool ShowTags => !string.IsNullOrEmpty(Tags);
+
+        public string? Demographic => Series.Demographic;
+        public bool ShowDemographic => Demographic != null;
+
+        public string Source => Series.Source;
+
         [ObservableProperty]
         private ObservableCollection<ChapterViewModel> allChapters = new();
 

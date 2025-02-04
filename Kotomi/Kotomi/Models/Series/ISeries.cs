@@ -9,7 +9,11 @@ namespace Kotomi.Models.Series
 {
     public interface ISeries
     {
+        public string Source { get; }
+
         public string? Title { get; }
+
+        public string? Author { get; }
 
         public byte[]? Cover { get; }
 

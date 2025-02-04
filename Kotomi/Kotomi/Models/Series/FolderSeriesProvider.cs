@@ -66,7 +66,11 @@ namespace Kotomi.Models.Series
 
     public class FolderSeries(string title, IChapter[] chapters) : ISeries
     {
+        public string Source => "Local folder";
+
         public string? Title => title;
+
+        public string? Author { get; set; }
 
         public string? URL { get; set; }
 
