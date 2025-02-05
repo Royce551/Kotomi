@@ -5,6 +5,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Series;
+using Kotomi.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,13 @@ namespace Kotomi.ViewModels
             this.series = series;
             SelectedChapterIndex = initialChapterIndex;
         }
- 
+
+        public override void AfterPageLoaded()
+        {
+            MainView.WindowTitleOverride = $"{Series.Title} - Kotomi";
+            base.AfterPageLoaded();
+        }
+
         public int? Volume => CurrentChapter.VolumeNumber;
         public bool ShowVolume => Volume != null;
 

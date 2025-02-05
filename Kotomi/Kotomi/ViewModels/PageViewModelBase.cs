@@ -14,5 +14,10 @@ namespace Kotomi.ViewModels
         {
 
         }
+
+        public virtual void AfterPageLoaded()
+        {
+
+        }
     }
 }

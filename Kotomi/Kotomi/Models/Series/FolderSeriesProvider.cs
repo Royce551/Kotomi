@@ -90,6 +90,7 @@ namespace Kotomi.Models.Series
     public class FolderChapter : IChapter
     {
         public string? Title { get; set; }
+
         public int? TotalPages => Pages.Count;
 
         public int? VolumeNumber { get; set; }
@@ -99,5 +100,7 @@ namespace Kotomi.Models.Series
         public List<string> Pages { get; set; } = default!;
 
         public Bitmap GetPageAsBitmap(int pageNumber) => new Bitmap(Pages[pageNumber - 1]);
+
+        public override string ToString() => Title;
     }
 }

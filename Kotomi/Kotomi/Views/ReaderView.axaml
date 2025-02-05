@@ -35,12 +35,12 @@
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBlock Text="Reading Mode" FontWeight="Bold"/>
+                <TextBlock Margin="0,10,0,0" Text="Reading Mode" FontWeight="Bold"/>
                 <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeSingle}">Single page</RadioButton>
                 <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeTwo}">Two pages</RadioButton>
                 <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeLong}">Long strip</RadioButton>
 
-                <TextBlock Text="Reading Direction" FontWeight="Bold"/>
+                <TextBlock Margin="0,10,0,0" Text="Reading Direction" FontWeight="Bold"/>
                 <RadioButton GroupName="ReadingDirection" IsChecked="{Binding ReadingDirectionLeftToRight}">Left to right</RadioButton>
                 <RadioButton GroupName="ReadingDirection" IsChecked="{Binding ReadingDirectionRightToLeft}">Right to left</RadioButton>
 

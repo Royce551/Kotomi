@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Library;
 using System;
@@ -36,6 +37,19 @@ namespace Kotomi.ViewModels
 
         public bool IsNavbarVisible => SelectedView is not ReaderViewModel;
 
+        private string? windowTitleOverride;
+        public string? WindowTitleOverride
+        {
+            get => windowTitleOverride;
+            set
+            {
+                windowTitleOverride = value;
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime && desktopLifetime.MainWindow != null)
+                    if (string.IsNullOrEmpty(windowTitleOverride)) desktopLifetime.MainWindow.Title = "Kotomi";
+                    else desktopLifetime.MainWindow.Title = windowTitleOverride;
+            }
+        }
+
         public Library Library { get; private set; }
 
         public MainViewModel()
@@ -55,6 +69,7 @@ namespace Kotomi.ViewModels
         {
             page.MainView = this;
             SelectedView = page;
+            page.AfterPageLoaded();
         }
     }
 }

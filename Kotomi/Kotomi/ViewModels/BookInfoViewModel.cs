@@ -47,6 +47,12 @@ namespace Kotomi.ViewModels
             }
         }
 
+        public override void AfterPageLoaded()
+        {
+            MainView.WindowTitleOverride = $"{Series.Title} - Kotomi";
+            base.AfterPageLoaded();
+        }
+
         public void Back() => MainView.NavigateTo(previousPage);
 
         public void StartReading() => MainView.NavigateTo(new ReaderViewModel(Series));

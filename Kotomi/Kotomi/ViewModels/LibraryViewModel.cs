@@ -21,12 +21,14 @@ namespace Kotomi.ViewModels
 
         public LibraryViewModel()
         {
-
+            
         }
 
         public void UpdateLibrary()
         {
             AllSeries = new(MainView.Library.GetAllSeries().Select(x => new SeriesViewModel(this, x)));
+
+            MainView.WindowTitleOverride = null;
         }
 
         public void Import(string url)
