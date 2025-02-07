@@ -31,10 +31,10 @@ namespace Kotomi.ViewModels
             base.AfterPageLoaded();
         }
 
-        public int? Volume => CurrentChapter.VolumeNumber;
+        public decimal? Volume => CurrentChapter.VolumeNumber;
         public bool ShowVolume => Volume != null;
 
-        public int Chapter => CurrentChapter.ChapterNumber is null ? SelectedChapterIndex + 1 : (int)CurrentChapter.ChapterNumber;
+        public decimal Chapter => CurrentChapter.ChapterNumber is null ? SelectedChapterIndex + 1 : (decimal)CurrentChapter.ChapterNumber;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]

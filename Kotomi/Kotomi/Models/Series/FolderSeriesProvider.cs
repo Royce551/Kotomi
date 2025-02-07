@@ -22,8 +22,8 @@ namespace Kotomi.Models.Series
             var chapters = new List<FolderChapter>();
 
             var volumeRegex = new Regex("[Vv]ol[^\\d]+(\\d+)");
-            var chapterRegex = new Regex("[Cc]h.+(\\d+)");
-            if (!chapterDirectories.Any(x => !chapterRegex.IsMatch(x)))
+            var chapterRegex = new Regex("[Cc]h.[^\\d]+([\\d.]+)");
+            if (!chapterDirectories.Any(x => !chapterRegex.IsMatch(x))) // If the volume and chapter info can be extracted for each folder
             {
                 foreach (var directory in chapterDirectories)
                 {
@@ -36,13 +36,13 @@ namespace Kotomi.Models.Series
                     pages.Sort();
                     chapter.Pages = pages;
 
-                    if (volumeMatch.Success) chapter.VolumeNumber = int.Parse(volumeMatch.Groups[1].Value);
-                    chapter.ChapterNumber = int.Parse(chapterMatch.Groups[1].Value);
+                    if (volumeMatch.Success) chapter.VolumeNumber = decimal.Parse(volumeMatch.Groups[1].Value);
+                    chapter.ChapterNumber = decimal.Parse(chapterMatch.Groups[1].Value);
 
                     chapters.Add(chapter);
                 }
             }
-            else
+            else // Otherwise, resort to just providing a sorted list of chapters
             {
                 foreach (var directory in chapterDirectories)
                 {
@@ -93,9 +93,9 @@ namespace Kotomi.Models.Series
 
         public int? TotalPages => Pages.Count;
 
-        public int? VolumeNumber { get; set; }
+        public decimal? VolumeNumber { get; set; }
 
-        public int? ChapterNumber { get; set; }
+        public decimal? ChapterNumber { get; set; }
 
         public List<string> Pages { get; set; } = default!;
 

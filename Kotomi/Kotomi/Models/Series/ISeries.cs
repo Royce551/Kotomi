@@ -34,9 +34,9 @@ namespace Kotomi.Models.Series
     {
         public string? Title { get; }
 
-        public int? VolumeNumber { get; }
+        public decimal? VolumeNumber { get; }
 
-        public int? ChapterNumber { get; }
+        public decimal? ChapterNumber { get; }
 
         public int? TotalPages { get; }
 

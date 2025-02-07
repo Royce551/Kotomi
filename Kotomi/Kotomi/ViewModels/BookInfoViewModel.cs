@@ -67,8 +67,8 @@ namespace Kotomi.ViewModels
     {
         public string? Title { get; }
         public int? TotalPages { get; }
-        public int? VolumeNumber { get; }
-        public int? ChapterNumber { get; }
+        public decimal? VolumeNumber { get; }
+        public decimal? ChapterNumber { get; }
 
         private BookInfoViewModel bookInfo;
         private ISeries series;

@@ -10,7 +10,7 @@
   <DockPanel>
     <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}" IsVisible="{Binding IsMenuBarShown}">
       <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}" LastChildFill="False">
-        <Button Margin="5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Library</Button>
+        <Button Margin="5,5,-5,5" DockPanel.Dock="Left" Command="{Binding SwitchToLibraryView}">Library</Button>
         <StackPanel DockPanel.Dock="Left" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
           <TextBlock Margin="10,0,0,0" Text="Volume" VerticalAlignment="Center" IsVisible="{Binding ShowVolume}"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Volume}" VerticalAlignment="Center" IsVisible="{Binding ShowVolume}"/>
