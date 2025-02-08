@@ -91,7 +91,7 @@ namespace Kotomi.Models.Series
     {
         public string? Title { get; set; }
 
-        public int? TotalPages => Pages.Count;
+        public int TotalPages => Pages.Count;
 
         public decimal? VolumeNumber { get; set; }
 
@@ -101,6 +101,6 @@ namespace Kotomi.Models.Series
 
         public Bitmap GetPageAsBitmap(int pageNumber) => new Bitmap(Pages[pageNumber - 1]);
 
-        public override string ToString() => Title;
+        public override string ToString() => Title ?? string.Empty;
     }
 }

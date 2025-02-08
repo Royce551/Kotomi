@@ -38,7 +38,7 @@ namespace Kotomi.Models.Series
 
         public decimal? ChapterNumber { get; }
 
-        public int? TotalPages { get; }
+        public int TotalPages { get; }
 
         public Bitmap GetPageAsBitmap(int pageNumber);
     }

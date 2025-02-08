@@ -16,7 +16,7 @@ namespace Kotomi.Views
 
         private IInsetsManager? insetsManager;
 
-        protected override async void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
 

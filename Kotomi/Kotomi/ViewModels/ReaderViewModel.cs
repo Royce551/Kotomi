@@ -36,12 +36,23 @@ namespace Kotomi.ViewModels
 
         public decimal Chapter => CurrentChapter.ChapterNumber is null ? SelectedChapterIndex + 1 : (decimal)CurrentChapter.ChapterNumber;
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        [NotifyPropertyChangedFor(nameof(CurrentChapter))]
-        [NotifyPropertyChangedFor(nameof(Chapter))]
-        [NotifyPropertyChangedFor(nameof(Volume))]
-        [NotifyPropertyChangedFor(nameof(ShowVolume))]
+        public int SelectedChapterIndex
+        {
+            get => selectedChapterIndex;
+            set
+            {
+                if (SetProperty(ref selectedChapterIndex, value))
+                {
+                    Page = 1;
+
+                    OnPropertyChanged(nameof(CurrentPage));
+                    OnPropertyChanged(nameof(CurrentChapter));
+                    OnPropertyChanged(nameof(Chapter));
+                    OnPropertyChanged(nameof(Volume));
+                    OnPropertyChanged(nameof(ShowVolume));    
+                }
+            }
+        }
         private int selectedChapterIndex = 0;
 
         [ObservableProperty]
@@ -55,7 +66,7 @@ namespace Kotomi.ViewModels
             {
                 if (ReadingModeSingle)
                 {
-                    var image = new Image() { Source = CurrentChapter.GetPageAsBitmap(page) };
+                    var image = new Image() { Source = CurrentChapter.GetPageAsBitmap(Page) };
 
                     image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
 
@@ -67,7 +78,7 @@ namespace Kotomi.ViewModels
                     var grid = new Grid() { ColumnDefinitions = new("*,*") };
                     var leftImage = new Image()
                     {
-                        Source = CurrentChapter.GetPageAsBitmap(page),
+                        Source = CurrentChapter.GetPageAsBitmap(Page),
                     };
 
                     leftImage.Bind(Image.MarginProperty, new Binding
@@ -82,7 +93,7 @@ namespace Kotomi.ViewModels
 
                     var rightImage = new Image()
                     {
-                        Source = CurrentChapter.GetPageAsBitmap(page + 1),
+                        Source = CurrentChapter.GetPageAsBitmap(Page + 1),
                     };
                     if (ReadingDirectionLeftToRight) Grid.SetColumn(rightImage, 1);
                     else Grid.SetColumn(rightImage, 0);
@@ -125,7 +136,7 @@ namespace Kotomi.ViewModels
             }
         }
 
-        public IChapter CurrentChapter => series.Chapters[SelectedChapterIndex];
+        public IChapter CurrentChapter => Series.Chapters[SelectedChapterIndex];
 
         public void SwitchToLibraryView() => MainView.NavigateTo(new LibraryViewModel());
 
@@ -152,14 +163,21 @@ namespace Kotomi.ViewModels
 
             if (ReadingDirectionLeftToRight)
             {
-                
+
                 if (Page - pagesToTurn >= 1)
                     Page -= pagesToTurn;
+                else if (SelectedChapterIndex >= 1)
+                {
+                    SelectedChapterIndex--;
+                    Page = CurrentChapter.TotalPages; // Flip to last page of chapter after chapter has been switched
+                }
             }
             else
             {
                 if (Page + pagesToTurn <= CurrentChapter.TotalPages)
                     Page += pagesToTurn;
+                else if (SelectedChapterIndex + 2 <= Series.Chapters.Length)
+                    SelectedChapterIndex++;
             }
         }
 
@@ -172,11 +190,18 @@ namespace Kotomi.ViewModels
 
                 if (Page + pagesToTurn <= CurrentChapter.TotalPages)
                     Page += pagesToTurn;
+                else if (SelectedChapterIndex + 2 <= Series.Chapters.Length)
+                    SelectedChapterIndex++;
             }
             else
             {
                 if (Page - pagesToTurn >= 1)
                     Page -= pagesToTurn;
+                else if (SelectedChapterIndex >= 1)
+                {
+                    SelectedChapterIndex--;
+                    Page = CurrentChapter.TotalPages; // Flip to last page of chapter after chapter has been switched
+                }
             }
         }
 
