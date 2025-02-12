@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Kotomi.ViewModels;assembly=Kotomi"
              xmlns:ms="clr-namespace:Kotomi.Models.Series;assembly=Kotomi"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kotomi.Views.ReaderView" Background="{DynamicResource BackgroundColor}"
+             x:Class="Kotomi.Views.ReaderView" Background="{DynamicResource BackgroundColor}" RenderOptions.BitmapInterpolationMode="HighQuality"
              x:DataType="vm:ReaderViewModel">
   <DockPanel>
     <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}" IsVisible="{Binding IsMenuBarShown}">

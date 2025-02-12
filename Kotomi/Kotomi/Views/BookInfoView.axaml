@@ -15,7 +15,7 @@
       <Panel Height="430">
         <DockPanel ZIndex="2" Margin="{Binding MainView.SafeAreaLeftTopRight}">
           <Button DockPanel.Dock="Top" Content="Back" Margin="20" Command="{Binding Back}"/>
-          <Image Source="{Binding Series.Cover, Converter={StaticResource byteArrayToBitmapConverter}}" Width="250" DockPanel.Dock="Left" Margin="20,20,0,10"/>
+          <Image Source="{Binding Series.Cover, Converter={StaticResource byteArrayToBitmapConverter}}" Width="250" DockPanel.Dock="Left" Margin="20,20,0,10" RenderOptions.BitmapInterpolationMode="HighQuality"/>
           <DockPanel Margin="10,20,0,0">
             <TextBlock DockPanel.Dock="Top" Text="{Binding Series.Title}" FontSize="48" TextWrapping="Wrap" FontWeight="Bold"/>
             <TextBlock DockPanel.Dock="Top" Text="{Binding Series.Author}"/>

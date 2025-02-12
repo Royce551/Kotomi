@@ -21,7 +21,7 @@
                     <DataTemplate>
                       <Button Command="{Binding Open}" Margin="0,0,10,10">
                         <StackPanel Spacing="2" Width="200">
-                          <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}"/>
+                          <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}" RenderOptions.BitmapInterpolationMode="HighQuality"/>
                           <TextBlock Text="{Binding Title}" FontSize="12" TextWrapping="Wrap"/>
                         </StackPanel>
                       </Button>
@@ -41,7 +41,7 @@
             <DataTemplate>
               <Button Command="{Binding Open}">
                 <StackPanel Spacing="2" Width="200">
-                  <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}"/>
+                  <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}" RenderOptions.BitmapInterpolationMode="HighQuality"/>
                   <TextBlock Text="{Binding Title}" FontSize="12" TextWrapping="Wrap"/>
                 </StackPanel>
               </Button>
