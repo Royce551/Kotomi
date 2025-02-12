@@ -59,6 +59,15 @@ namespace Kotomi.ViewModels
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
         private int page = 1;
 
+        [ObservableProperty]
+        private int secondPage; // the 2nd page when reading mode is set to Two Pages
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(readingModeLongMarginAsThickness))]
+        private double readingModeLongMargin = 0;
+
+        private Thickness readingModeLongMarginAsThickness => new Thickness(ReadingModeLongMargin, 0);
+
         // TODO: yikes! UI code in the VM layer? not ideal at all
         public Control? CurrentPage
         {
@@ -75,6 +84,9 @@ namespace Kotomi.ViewModels
                 
                 if (ReadingModeTwo)
                 {
+                    if (Page % 2 == 0) Page--; // If the page is not odd, go back to the previous page so that the 2nd page will be even
+                    SecondPage = Page + 1;
+
                     var grid = new Grid() { ColumnDefinitions = new("*,*") };
                     var leftImage = new Image()
                     {
@@ -91,14 +103,17 @@ namespace Kotomi.ViewModels
                     else Grid.SetColumn(leftImage, 1);
                     grid.Children.Add(leftImage);
 
-                    var rightImage = new Image()
+                    if (SecondPage <= CurrentChapter.TotalPages)
                     {
-                        Source = CurrentChapter.GetPageAsBitmap(Page + 1),
-                    };
-                    if (ReadingDirectionLeftToRight) Grid.SetColumn(rightImage, 1);
-                    else Grid.SetColumn(rightImage, 0);
-                    grid.Children.Add(rightImage);
-
+                        var rightImage = new Image()
+                        {
+                            Source = CurrentChapter.GetPageAsBitmap(SecondPage),
+                        };
+                        if (ReadingDirectionLeftToRight) Grid.SetColumn(rightImage, 1);
+                        else Grid.SetColumn(rightImage, 0);
+                        grid.Children.Add(rightImage);
+                    }
+                   
                     grid.Bind(Grid.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
 
                     return grid;
@@ -114,19 +129,33 @@ namespace Kotomi.ViewModels
 
                         if (i == 1)
                         {
-                            image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) });
+                            image.Bind(Image.MarginProperty, new MultiBinding()
+                            {
+                                Converter = new CombineMarginsConverter(),
+                                Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) },
+                                new Binding{ Source = this, Path = nameof(readingModeLongMarginAsThickness)}]
+                            });
                         }
                         else if (i == CurrentChapter.TotalPages)
                         {
-                            image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) });
+                            image.Bind(Image.MarginProperty, new MultiBinding()
+                            {
+                                Converter = new CombineMarginsConverter(),
+                                Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) },
+                                new Binding{ Source = this, Path = nameof(readingModeLongMarginAsThickness)}]
+                            });
                         }
                         else
                         {
-                            image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) });
+                            image.Bind(Image.MarginProperty, new MultiBinding()
+                            {
+                                Converter = new CombineMarginsConverter(),
+                                Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) },
+                                new Binding{ Source = this, Path = nameof(readingModeLongMarginAsThickness)}]
+                            });
                         }
 
                         stackPanel.Children.Add(image);
-
                         
                     }
                     scrollViewer.Content = stackPanel;
@@ -163,45 +192,50 @@ namespace Kotomi.ViewModels
 
             if (ReadingDirectionLeftToRight)
             {
-
-                if (Page - pagesToTurn >= 1)
+                if (ReadingModeLong) PreviousChapter();
+                else if (Page - pagesToTurn >= 1)
                     Page -= pagesToTurn;
-                else if (SelectedChapterIndex >= 1)
-                {
-                    SelectedChapterIndex--;
-                    Page = CurrentChapter.TotalPages; // Flip to last page of chapter after chapter has been switched
-                }
+                else PreviousChapter();
             }
             else
             {
-                if (Page + pagesToTurn <= CurrentChapter.TotalPages)
+                if (ReadingModeLong) NextChapter();
+                else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
                     Page += pagesToTurn;
-                else if (SelectedChapterIndex + 2 <= Series.Chapters.Length)
-                    SelectedChapterIndex++;
+                else NextChapter();
             }
         }
-
         public void PageRight()
         {
             var pagesToTurn = ReadingModeSingle ? 1 : 2;
 
             if (ReadingDirectionLeftToRight)
             {
-
-                if (Page + pagesToTurn <= CurrentChapter.TotalPages)
+                if (ReadingModeLong) NextChapter();
+                else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
                     Page += pagesToTurn;
-                else if (SelectedChapterIndex + 2 <= Series.Chapters.Length)
-                    SelectedChapterIndex++;
+                else NextChapter();
             }
             else
             {
-                if (Page - pagesToTurn >= 1)
+                if (ReadingModeLong) PreviousChapter();
+                else if (Page - pagesToTurn >= 1)
                     Page -= pagesToTurn;
-                else if (SelectedChapterIndex >= 1)
-                {
-                    SelectedChapterIndex--;
-                    Page = CurrentChapter.TotalPages; // Flip to last page of chapter after chapter has been switched
-                }
+                else PreviousChapter();
+            }
+        }
+
+        public void NextChapter()
+        {
+            if (SelectedChapterIndex + 2 <= Series.Chapters.Length)
+                SelectedChapterIndex++;
+        }
+        public void PreviousChapter()
+        {
+            if (SelectedChapterIndex >= 1)
+            {
+                SelectedChapterIndex--;
+                Page = CurrentChapter.TotalPages; // Flip to last page of chapter after chapter has been switched
             }
         }
 

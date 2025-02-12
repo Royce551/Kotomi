@@ -1,10 +1,14 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Library;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace Kotomi.ViewModels
 {
@@ -70,6 +74,22 @@ namespace Kotomi.ViewModels
             page.MainView = this;
             SelectedView = page;
             page.AfterPageLoaded();
+        }
+    }
+
+    public class CombineMarginsConverter : IMultiValueConverter
+    {
+        public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (!values.All(x => x is Thickness)) throw new NotSupportedException();
+
+            var valuesAsThickness = values.OfType<Thickness>();
+
+            var y = new Thickness(valuesAsThickness.Sum(x => x.Left),
+                                 valuesAsThickness.Sum(x => x.Top),
+                                 valuesAsThickness.Sum(x => x.Right),
+                                 valuesAsThickness.Sum(x => x.Bottom));
+            return y;
         }
     }
 }
