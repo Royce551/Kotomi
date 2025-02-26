@@ -11,7 +11,13 @@ namespace Kotomi.Views
         public MainView()
         {
             DataContext = new MainViewModel();
+            Unloaded += MainView_Unloaded;
             InitializeComponent();
+        }
+
+        private void MainView_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            (DataContext as MainViewModel)!.Library.Close();
         }
 
         private IInsetsManager? insetsManager;
@@ -36,5 +42,6 @@ namespace Kotomi.Views
                 (DataContext as MainViewModel)!.SafeArea = insetsManager.SafeAreaPadding;
             }
         }
+
     }
 }

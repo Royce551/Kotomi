@@ -13,7 +13,7 @@ namespace Kotomi.Views
 
         protected override void OnDataContextChanged(EventArgs e)
         {
-            (DataContext as LibraryViewModel)?.UpdateLibrary();
+            //(DataContext as LibraryViewModel)?.UpdateLibrary();
             base.OnDataContextChanged(e);
         }
 

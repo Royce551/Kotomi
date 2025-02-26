@@ -16,25 +16,24 @@ namespace Kotomi.ViewModels
 {
     public partial class LibraryViewModel : PageViewModelBase
     {
-        [ObservableProperty]
-        private ObservableCollection<SeriesViewModel> allSeries = new();
+        //[ObservableProperty]
+        //private ObservableCollection<SeriesViewModel> allSeries = new();
+        public IEnumerable<SeriesViewModel> AllSeries => MainView.Library.Series.Select(x => new SeriesViewModel(this, x));
 
         public LibraryViewModel()
         {
             
         }
 
-        public void UpdateLibrary()
+        public override void AfterPageLoaded()
         {
-            AllSeries = new(MainView.Library.GetAllSeries().Select(x => new SeriesViewModel(this, x)));
-
             MainView.WindowTitleOverride = null;
         }
 
         public void Import(string url)
         {
             MainView.Library.Import($"folder://{url}");
-            UpdateLibrary();
+            OnPropertyChanged(nameof(AllSeries));
         }
     }
 
@@ -45,11 +44,13 @@ namespace Kotomi.ViewModels
         public string? Author => series.Author;
         public byte[]? Cover => series.Cover;
         public string? URL { get; set; }
+        public string? PrefixedURL { get; set; }
         public IChapter[] Chapters => series.Chapters;
         public string? Description => series.Description;
         public string[]? Genres => series.Genres;
         public string[]? Tags => series.Tags;
         public string? Demographic => series.Demographic;
+        public bool IsInteractive => series.IsInteractive;
 
         private LibraryViewModel library => _library;
 

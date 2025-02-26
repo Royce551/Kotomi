@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,30 @@ namespace Kotomi.Models.Library
 {
     public class Library
     {
-        public const string SeriesCollectionName = "Series";
+        public List<ISeries> Series { get; private set; }
 
         private string filePath;
 
         public Library(string filePath)
         {
             this.filePath = filePath;
+
+            Series = GetAllSeries();
         }
 
-        public List<ISeries> GetAllSeries()
+        public void Import(string url)
+        {
+            Series.Add(SeriesLocator.GetSeriesForPrefixedURL(url));
+            Close();
+        }
+
+        public void Close()
+        {
+            var seriesAsDatabaseSeries = Series.Select(x => new DatabaseSeries(x));
+            Write(seriesAsDatabaseSeries.ToList());
+        }
+
+        private List<ISeries> GetAllSeries()
         {
             var series = Read();
 
@@ -33,23 +48,9 @@ namespace Kotomi.Models.Library
             return concreteSeries;
         }
 
-        public void Import(string url)
-        {
-            var allSeries = GetAllSeries();
-            var concreteSeries = SeriesLocator.GetSeriesForPrefixedURL(url);
-            concreteSeries.URL = url;
-            allSeries.Add(concreteSeries);
+        
 
-            var z = new List<DatabaseSeries>();
-            foreach (var series in allSeries)
-            {
-                z.Add(new DatabaseSeries(series));
-            }
-
-            Write(z);
-        }
-
-        public List<DatabaseSeries> Read()
+        private List<DatabaseSeries> Read()
         {
             if (!File.Exists(Path.Combine(filePath, "library.json")))
             {
@@ -61,7 +62,7 @@ namespace Kotomi.Models.Library
                 return (List<DatabaseSeries>)jsonSerializer.Deserialize(file, typeof(List<DatabaseSeries>));
             }
         }
-        public void Write(List<DatabaseSeries> config)
+        private void Write(List<DatabaseSeries> config)
         {
             if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
             using (StreamWriter file = File.CreateText(Path.Combine(filePath, "library.json")))
@@ -89,7 +90,7 @@ namespace Kotomi.Models.Library
         public DatabaseSeries(ISeries series)
         {
             Title = series.Title!;
-            URL = series.URL!;
+            URL = series.PrefixedURL!;
         }
     }
 }

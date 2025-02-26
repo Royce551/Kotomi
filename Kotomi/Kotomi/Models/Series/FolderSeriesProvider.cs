@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,8 +22,8 @@ namespace Kotomi.Models.Series
 
             var chapters = new List<FolderChapter>();
 
-            var volumeRegex = new Regex("[Vv]ol[^\\d]+(\\d+)");
-            var chapterRegex = new Regex("[Cc]h.[^\\d]+([\\d.]+)");
+            var volumeRegex = new Regex("(?<=[V]ol[\\w.]* )([\\d.]+)");
+            var chapterRegex = new Regex("(?<=[Cc]h[\\w.]* )([\\d.]+)");
             if (!chapterDirectories.Any(x => !chapterRegex.IsMatch(x))) // If the volume and chapter info can be extracted for each folder
             {
                 foreach (var directory in chapterDirectories)
@@ -55,11 +56,11 @@ namespace Kotomi.Models.Series
                 }
             }
 
-            var series = new FolderSeries(Path.GetFileName(url), chapters.OrderBy(x => x.VolumeNumber).ThenBy(x => x.ChapterNumber).ToArray())
+            var series = new FolderSeries(Path.GetFileName(Path.GetDirectoryName(url)), chapters.OrderBy(x => x.VolumeNumber).ThenBy(x => x.ChapterNumber).ToArray())
             {
                 Cover = File.ReadAllBytes(Path.Combine(url, "cover.jpg"))
             };
-
+            series.URL = url;
             return series;
         }
     }
@@ -72,8 +73,6 @@ namespace Kotomi.Models.Series
 
         public string? Author { get; set; }
 
-        public string? URL { get; set; }
-
         public string? Description { get; init; }
 
         public string[]? Genres { get; init; }
@@ -85,6 +84,12 @@ namespace Kotomi.Models.Series
         public byte[]? Cover { get; init; }
 
         public IChapter[] Chapters => chapters;
+
+        public bool IsInteractive => false;
+
+        public string? URL { get; set; }
+
+        public string? PrefixedURL => $"folder://{URL}";
     }
 
     public class FolderChapter : IChapter
@@ -99,7 +104,7 @@ namespace Kotomi.Models.Series
 
         public List<string> Pages { get; set; } = default!;
 
-        public Bitmap GetPageAsBitmap(int pageNumber) => new Bitmap(Pages[pageNumber - 1]);
+        public Control GetPageAsControl(int pageNumber) => new Image() { Source = new Bitmap(Pages[pageNumber - 1]) };
 
         public override string ToString() => Title ?? string.Empty;
     }

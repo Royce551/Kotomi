@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,19 @@ namespace Kotomi.Models.Series
     {
         public string Source { get; }
 
+        public bool IsInteractive { get; }
+
         public string? Title { get; }
 
         public string? Author { get; }
 
         public byte[]? Cover { get; }
 
+        public string? Description { get; }
+
         public string? URL { get; set; }
 
-        public string? Description { get; }
+        public string? PrefixedURL { get; }
 
         public string[]? Genres { get; }
 
@@ -40,6 +45,6 @@ namespace Kotomi.Models.Series
 
         public int TotalPages { get; }
 
-        public Bitmap GetPageAsBitmap(int pageNumber);
+        public Control GetPageAsControl(int pageNumber);
     }
 }

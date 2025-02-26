@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -75,11 +76,11 @@ namespace Kotomi.ViewModels
             {
                 if (ReadingModeSingle)
                 {
-                    var image = new Image() { Source = CurrentChapter.GetPageAsBitmap(Page) };
+                    var page = CurrentChapter.GetPageAsControl(Page);
 
-                    image.Bind(Image.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
+                    page.Bind(Layoutable.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
 
-                    return image;
+                    return page;
                 }
                 
                 if (ReadingModeTwo)
@@ -88,33 +89,27 @@ namespace Kotomi.ViewModels
                     SecondPage = Page + 1;
 
                     var grid = new Grid() { ColumnDefinitions = new("*,*") };
-                    var leftImage = new Image()
-                    {
-                        Source = CurrentChapter.GetPageAsBitmap(Page),
-                    };
+                    var leftPage = CurrentChapter.GetPageAsControl(Page);
 
-                    leftImage.Bind(Image.MarginProperty, new Binding
+                    leftPage.Bind(Layoutable.MarginProperty, new Binding
                     {
                         Source = MainView,
                         Path = nameof(MainView.SafeAreaLeft)
                     });
 
-                    if (ReadingDirectionLeftToRight) Grid.SetColumn(leftImage, 0);
-                    else Grid.SetColumn(leftImage, 1);
-                    grid.Children.Add(leftImage);
+                    if (ReadingDirectionLeftToRight) Grid.SetColumn(leftPage, 0);
+                    else Grid.SetColumn(leftPage, 1);
+                    grid.Children.Add(leftPage);
 
                     if (SecondPage <= CurrentChapter.TotalPages)
                     {
-                        var rightImage = new Image()
-                        {
-                            Source = CurrentChapter.GetPageAsBitmap(SecondPage),
-                        };
-                        if (ReadingDirectionLeftToRight) Grid.SetColumn(rightImage, 1);
-                        else Grid.SetColumn(rightImage, 0);
-                        grid.Children.Add(rightImage);
+                        var rightPage = CurrentChapter.GetPageAsControl(SecondPage);
+                        if (ReadingDirectionLeftToRight) Grid.SetColumn(rightPage, 1);
+                        else Grid.SetColumn(rightPage, 0);
+                        grid.Children.Add(rightPage);
                     }
                    
-                    grid.Bind(Grid.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
+                    grid.Bind(Layoutable.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
 
                     return grid;
                 }
@@ -124,12 +119,11 @@ namespace Kotomi.ViewModels
                     var stackPanel = new StackPanel { Spacing = 5 };
                     for (int i = 1; i < CurrentChapter.TotalPages; i++)
                     {
-                        var imageSource = CurrentChapter.GetPageAsBitmap(i);
-                        var image = new Image() { Source = imageSource, MaxHeight = imageSource.Size.Height };
+                        var page = CurrentChapter.GetPageAsControl(i);
 
                         if (i == 1)
                         {
-                            image.Bind(Image.MarginProperty, new MultiBinding()
+                            page.Bind(Layoutable.MarginProperty, new MultiBinding()
                             {
                                 Converter = new CombineMarginsConverter(),
                                 Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) },
@@ -138,7 +132,7 @@ namespace Kotomi.ViewModels
                         }
                         else if (i == CurrentChapter.TotalPages)
                         {
-                            image.Bind(Image.MarginProperty, new MultiBinding()
+                            page.Bind(Layoutable.MarginProperty, new MultiBinding()
                             {
                                 Converter = new CombineMarginsConverter(),
                                 Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) },
@@ -147,7 +141,7 @@ namespace Kotomi.ViewModels
                         }
                         else
                         {
-                            image.Bind(Image.MarginProperty, new MultiBinding()
+                            page.Bind(Layoutable.MarginProperty, new MultiBinding()
                             {
                                 Converter = new CombineMarginsConverter(),
                                 Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) },
@@ -155,7 +149,7 @@ namespace Kotomi.ViewModels
                             });
                         }
 
-                        stackPanel.Children.Add(image);
+                        stackPanel.Children.Add(page);
                         
                     }
                     scrollViewer.Content = stackPanel;
@@ -177,7 +171,10 @@ namespace Kotomi.ViewModels
         private bool readingModeTwo;
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
+        [NotifyPropertyChangedFor(nameof(ShowAlternativeControls))]
         private bool readingModeLong;
+
+        public bool ShowAlternativeControls => ReadingModeLong || Series.IsInteractive;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]

@@ -15,19 +15,23 @@ namespace Kotomi
 
         public override void OnFrameworkInitializationCompleted()
         {
+            var mainViewModel = new MainViewModel();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainViewModel()
+                    DataContext = mainViewModel
                 };
+                //desktop.
+                //desktop.Exit += (s, e) => mainViewModel.Library.Close();
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
                 singleViewPlatform.MainView = new MainView
                 {
-                    DataContext = new MainViewModel()
+                    DataContext = mainViewModel
                 };
+                // TODO: handle closing for mobile
             }
 
             base.OnFrameworkInitializationCompleted();
