@@ -17,7 +17,7 @@ namespace Kotomi.Views
 
         private void MainView_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            (DataContext as MainViewModel)!.Library.Close();
+            (DataContext as MainViewModel)!.HandleAppClosing();
         }
 
         private IInsetsManager? insetsManager;

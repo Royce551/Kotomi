@@ -59,7 +59,7 @@ namespace Kotomi.ViewModels
 
         public void AddRemoveLibrary()
         {
-
+            MainView.Config.ReadingModeLongMargin = 100;
         }
     }
 

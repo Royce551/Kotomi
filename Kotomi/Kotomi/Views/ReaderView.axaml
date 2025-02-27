@@ -18,12 +18,12 @@
           <TextBlock Margin="10,0,0,0" Text="Chapter" VerticalAlignment="Center"/>
           <TextBlock Margin="5,0,0,0" Text="{Binding Chapter}" VerticalAlignment="Center"/>
           
-          <TextBlock Margin="10,0,0,0" Text="Page" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
-          <TextBlock Margin="5,0,0,0" Text="{Binding Page}" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
-          <TextBlock Text="-" VerticalAlignment="Center" IsVisible="{Binding ReadingModeTwo}"/>
-          <TextBlock Text="{Binding SecondPage}" VerticalAlignment="Center" IsVisible="{Binding ReadingModeTwo}"/>
-          <TextBlock Margin="5,0,0,0" Text="/" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
-          <TextBlock Margin="5,0,0,0" Text="{Binding CurrentChapter.TotalPages}" VerticalAlignment="Center" IsVisible="{Binding !ReadingModeLong}"/>
+          <TextBlock Margin="10,0,0,0" Text="Page" VerticalAlignment="Center" IsVisible="{Binding !MainView.Config.ReadingModeLong}"/>
+          <TextBlock Margin="5,0,0,0" Text="{Binding Page}" VerticalAlignment="Center" IsVisible="{Binding !MainView.Config.ReadingModeLong}"/>
+          <TextBlock Text="-" VerticalAlignment="Center" IsVisible="{Binding MainView.Config.ReadingModeTwo}"/>
+          <TextBlock Text="{Binding SecondPage}" VerticalAlignment="Center" IsVisible="{Binding MainView.Config.ReadingModeTwo}"/>
+          <TextBlock Margin="5,0,0,0" Text="/" VerticalAlignment="Center" IsVisible="{Binding !MainView.Config.ReadingModeLong}"/>
+          <TextBlock Margin="5,0,0,0" Text="{Binding CurrentChapter.TotalPages}" VerticalAlignment="Center" IsVisible="{Binding !MainView.Config.ReadingModeLong}"/>
         </StackPanel>
         <Button Margin="5" DockPanel.Dock="Right" Content="Menu">
           <Button.Flyout>
@@ -38,18 +38,18 @@
                   </ComboBox.ItemTemplate>
                 </ComboBox>
                 <TextBlock Margin="0,10,0,0" Text="Reading Mode" FontWeight="Bold"/>
-                <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeSingle}">Single page</RadioButton>
-                <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeTwo}">Two pages</RadioButton>
-                <RadioButton GroupName="ReadingMode" IsChecked="{Binding ReadingModeLong}">Long strip</RadioButton>
-                <TextBlock Text="Long strip margin" IsVisible="{Binding ReadingModeLong}"/>
-                <Slider Value="{Binding ReadingModeLongMargin}" Minimum="0" Maximum="1000" ToolTip.Tip="{Binding ReadingModeLongMargin}" IsVisible="{Binding ReadingModeLong}"/>
+                <RadioButton GroupName="ReadingMode" IsChecked="{Binding MainView.Config.ReadingModeSingle}">Single page</RadioButton>
+                <RadioButton GroupName="ReadingMode" IsChecked="{Binding MainView.Config.ReadingModeTwo}">Two pages</RadioButton>
+                <RadioButton GroupName="ReadingMode" IsChecked="{Binding MainView.Config.ReadingModeLong}">Long strip</RadioButton>
+                <TextBlock Text="Long strip margin" IsVisible="{Binding MainView.Config.ReadingModeLong}"/>
+                <Slider Value="{Binding MainView.Config.ReadingModeLongMargin}" Minimum="0" Maximum="1000" ToolTip.Tip="{Binding MainView.Config.ReadingModeLongMargin}" IsVisible="{Binding MainView.Config.ReadingModeLong}"/>
                 
                 <TextBlock Margin="0,10,0,0" Text="Reading Direction" FontWeight="Bold"/>
-                <RadioButton GroupName="ReadingDirection" IsChecked="{Binding ReadingDirectionLeftToRight}">Left to right</RadioButton>
-                <RadioButton GroupName="ReadingDirection" IsChecked="{Binding ReadingDirectionRightToLeft}">Right to left</RadioButton>
+                <RadioButton GroupName="ReadingDirection" IsChecked="{Binding MainView.Config.ReadingDirectionLeftToRight}">Left to right</RadioButton>
+                <RadioButton GroupName="ReadingDirection" IsChecked="{Binding MainView.Config.ReadingDirectionRightToLeft}">Right to left</RadioButton>
 
                 <CheckBox Margin="0,10,0,0" Content="Show menu bar" IsChecked="{Binding IsMenuBarShown}" HotKey="F11"/>
-                <CheckBox Content="Fullscreen"/>
+                <CheckBox Content="Fullscreen" IsEnabled="False"/>
               </StackPanel>
             </Flyout>
           </Button.Flyout>

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Kotomi.Models.Configuration;
 using Kotomi.Models.Library;
 using System;
 using System.Collections.Generic;
@@ -54,7 +55,9 @@ namespace Kotomi.ViewModels
             }
         }
 
-        public Library Library { get; private set; }
+        public Library Library { get; private set; } = default!; 
+
+        public ConfigurationFile Config { get; private set; } = default!; // will not be null when app is actually running
 
         public MainViewModel()
         {
@@ -62,15 +65,26 @@ namespace Kotomi.ViewModels
             {
                 var dataFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Squidhouse Software", "Kotomi");
                 Directory.CreateDirectory(dataFolderPath);
+
                 Library = new Library(dataFolderPath);
-            }
-            
+                Config = ConfigurationFile.Read(dataFolderPath);
+            }  
 
             NavigateTo(new LibraryViewModel());
         }
 
+        public void HandleAppClosing()
+        {
+            var dataFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Squidhouse Software", "Kotomi");
+
+            Library.Close();
+            Config.Save(dataFolderPath);
+        }
+
         public void NavigateTo(PageViewModelBase page)
         {
+            SelectedView?.OnNavigatingAway();
+
             page.MainView = this;
             SelectedView = page;
             page.AfterPageLoaded();

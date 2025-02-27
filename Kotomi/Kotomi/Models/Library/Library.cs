@@ -48,27 +48,21 @@ namespace Kotomi.Models.Library
             return concreteSeries;
         }
 
-        
-
         private List<DatabaseSeries> Read()
         {
-            if (!File.Exists(Path.Combine(filePath, "library.json")))
-            {
-                Write(new List<DatabaseSeries>());
-            }
-            using (StreamReader file = File.OpenText(Path.Combine(filePath, "library.json")))
-            {
-                var jsonSerializer = new JsonSerializer();
-                return (List<DatabaseSeries>)jsonSerializer.Deserialize(file, typeof(List<DatabaseSeries>));
-            }
+            if (!File.Exists(Path.Combine(filePath, "library.json"))) Write(new List<DatabaseSeries>());
+
+            using StreamReader file = File.OpenText(Path.Combine(filePath, "library.json"));
+            var jsonSerializer = new JsonSerializer();
+
+            return (List<DatabaseSeries>?)jsonSerializer.Deserialize(file, typeof(List<DatabaseSeries>)) ?? throw new Exception();
         }
         private void Write(List<DatabaseSeries> config)
         {
             if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
-            using (StreamWriter file = File.CreateText(Path.Combine(filePath, "library.json")))
-            {
-                new JsonSerializer().Serialize(file, config);
-            }
+
+            using StreamWriter file = File.CreateText(Path.Combine(filePath, "library.json"));
+            new JsonSerializer().Serialize(file, config);
         }
     }
 

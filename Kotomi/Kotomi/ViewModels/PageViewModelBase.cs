@@ -17,7 +17,12 @@ namespace Kotomi.ViewModels
 
         public virtual void AfterPageLoaded()
         {
+            IsActive = true;
+        }
 
+        public virtual void OnNavigatingAway()
+        {
+            IsActive = false;
         }
     }
 }

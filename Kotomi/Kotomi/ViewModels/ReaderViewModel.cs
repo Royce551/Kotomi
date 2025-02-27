@@ -5,6 +5,9 @@ using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using Kotomi.Models.Configuration;
 using Kotomi.Models.Series;
 using Kotomi.Views;
 using System;
@@ -15,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Kotomi.ViewModels
 {
-    public partial class ReaderViewModel : PageViewModelBase
+    public partial class ReaderViewModel : PageViewModelBase, IRecipient<PropertyChangedMessage<double>>, IRecipient<PropertyChangedMessage<bool>>
     {
         [ObservableProperty]
         private ISeries series;
@@ -23,13 +26,18 @@ namespace Kotomi.ViewModels
         public ReaderViewModel(ISeries series, int initialChapterIndex = 0)
         {
             this.series = series;
-            SelectedChapterIndex = initialChapterIndex;
+            SelectedChapterIndex = initialChapterIndex;        
         }
 
         public override void AfterPageLoaded()
         {
             MainView.WindowTitleOverride = $"{Series.Title} - Kotomi";
             base.AfterPageLoaded();
+        }
+
+        public override void OnNavigatingAway()
+        {
+            base.OnNavigatingAway();
         }
 
         public decimal? Volume => CurrentChapter.VolumeNumber;
@@ -58,23 +66,26 @@ namespace Kotomi.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
+
         private int page = 1;
 
         [ObservableProperty]
         private int secondPage; // the 2nd page when reading mode is set to Two Pages
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(readingModeLongMarginAsThickness))]
-        private double readingModeLongMargin = 0;
+        public void Receive(PropertyChangedMessage<double> message)
+        {
+            if (message is { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingModeLongMargin) })
+                OnPropertyChanged(nameof(ReadingModeLongMarginAsThickness));
+        }
 
-        private Thickness readingModeLongMarginAsThickness => new Thickness(ReadingModeLongMargin, 0);
+        private Thickness ReadingModeLongMarginAsThickness => new Thickness(MainView.Config.ReadingModeLongMargin, 0);
 
         // TODO: yikes! UI code in the VM layer? not ideal at all
         public Control? CurrentPage
         {
             get
             {
-                if (ReadingModeSingle)
+                if (MainView.Config.ReadingModeSingle)
                 {
                     var page = CurrentChapter.GetPageAsControl(Page);
 
@@ -83,7 +94,7 @@ namespace Kotomi.ViewModels
                     return page;
                 }
                 
-                if (ReadingModeTwo)
+                if (MainView.Config.ReadingModeTwo)
                 {
                     if (Page % 2 == 0) Page--; // If the page is not odd, go back to the previous page so that the 2nd page will be even
                     SecondPage = Page + 1;
@@ -97,14 +108,14 @@ namespace Kotomi.ViewModels
                         Path = nameof(MainView.SafeAreaLeft)
                     });
 
-                    if (ReadingDirectionLeftToRight) Grid.SetColumn(leftPage, 0);
+                    if (MainView.Config.ReadingDirectionLeftToRight) Grid.SetColumn(leftPage, 0);
                     else Grid.SetColumn(leftPage, 1);
                     grid.Children.Add(leftPage);
 
                     if (SecondPage <= CurrentChapter.TotalPages)
                     {
                         var rightPage = CurrentChapter.GetPageAsControl(SecondPage);
-                        if (ReadingDirectionLeftToRight) Grid.SetColumn(rightPage, 1);
+                        if (MainView.Config.ReadingDirectionLeftToRight) Grid.SetColumn(rightPage, 1);
                         else Grid.SetColumn(rightPage, 0);
                         grid.Children.Add(rightPage);
                     }
@@ -113,7 +124,7 @@ namespace Kotomi.ViewModels
 
                     return grid;
                 }
-                if (ReadingModeLong)
+                if (MainView.Config.ReadingModeLong)
                 {
                     var scrollViewer = new ScrollViewer();
                     var stackPanel = new StackPanel { Spacing = 5 };
@@ -127,7 +138,7 @@ namespace Kotomi.ViewModels
                             {
                                 Converter = new CombineMarginsConverter(),
                                 Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) },
-                                new Binding{ Source = this, Path = nameof(readingModeLongMarginAsThickness)}]
+                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
                             });
                         }
                         else if (i == CurrentChapter.TotalPages)
@@ -136,7 +147,7 @@ namespace Kotomi.ViewModels
                             {
                                 Converter = new CombineMarginsConverter(),
                                 Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) },
-                                new Binding{ Source = this, Path = nameof(readingModeLongMarginAsThickness)}]
+                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
                             });
                         }
                         else
@@ -145,7 +156,7 @@ namespace Kotomi.ViewModels
                             {
                                 Converter = new CombineMarginsConverter(),
                                 Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) },
-                                new Binding{ Source = this, Path = nameof(readingModeLongMarginAsThickness)}]
+                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
                             });
                         }
 
@@ -163,40 +174,34 @@ namespace Kotomi.ViewModels
 
         public void SwitchToLibraryView() => MainView.NavigateTo(new LibraryViewModel());
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        private bool readingModeSingle = true;
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        private bool readingModeTwo;
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        [NotifyPropertyChangedFor(nameof(ShowAlternativeControls))]
-        private bool readingModeLong;
+        public bool ShowAlternativeControls => MainView.Config.ReadingModeLong || Series.IsInteractive;
 
-        public bool ShowAlternativeControls => ReadingModeLong || Series.IsInteractive;
+        public void Receive(PropertyChangedMessage<bool> message)
+        {
+            if (message is { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingModeSingle) }
+                        or { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingModeTwo)}
+                        or { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingModeLong)}
+                        or { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingDirectionLeftToRight)}
+                        or { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingDirectionRightToLeft) })
+                OnPropertyChanged(nameof(CurrentPage));
+            if (message is { Sender: ConfigurationFile, PropertyName: nameof(ConfigurationFile.ReadingModeLong) })
+                OnPropertyChanged(nameof(ShowAlternativeControls));
+        }
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        private bool readingDirectionLeftToRight;
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CurrentPage))]
-        private bool readingDirectionRightToLeft = true;
-        
         public void PageLeft()
         {
-            var pagesToTurn = ReadingModeSingle ? 1 : 2;
+            var pagesToTurn = MainView.Config.ReadingModeSingle ? 1 : 2;
 
-            if (ReadingDirectionLeftToRight)
+            if (MainView.Config.ReadingDirectionLeftToRight)
             {
-                if (ReadingModeLong) PreviousChapter();
+                if (MainView.Config.ReadingModeLong) PreviousChapter();
                 else if (Page - pagesToTurn >= 1)
                     Page -= pagesToTurn;
                 else PreviousChapter();
             }
             else
             {
-                if (ReadingModeLong) NextChapter();
+                if (MainView.Config.ReadingModeLong) NextChapter();
                 else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
                     Page += pagesToTurn;
                 else NextChapter();
@@ -204,18 +209,18 @@ namespace Kotomi.ViewModels
         }
         public void PageRight()
         {
-            var pagesToTurn = ReadingModeSingle ? 1 : 2;
+            var pagesToTurn = MainView.Config.ReadingModeSingle ? 1 : 2;
 
-            if (ReadingDirectionLeftToRight)
+            if (MainView.Config.ReadingDirectionLeftToRight)
             {
-                if (ReadingModeLong) NextChapter();
+                if (MainView.Config.ReadingModeLong) NextChapter();
                 else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
                     Page += pagesToTurn;
                 else NextChapter();
             }
             else
             {
-                if (ReadingModeLong) PreviousChapter();
+                if (MainView.Config.ReadingModeLong) PreviousChapter();
                 else if (Page - pagesToTurn >= 1)
                     Page -= pagesToTurn;
                 else PreviousChapter();
