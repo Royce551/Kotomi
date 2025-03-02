@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
+using Kotomi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,6 +46,7 @@ namespace Kotomi.Models.Series
             }
             else // Otherwise, resort to just providing a sorted list of chapters
             {
+                int i = 1;
                 foreach (var directory in chapterDirectories)
                 {
                     var chapter = new FolderChapter();
@@ -52,7 +54,9 @@ namespace Kotomi.Models.Series
                     var pages = Directory.GetFiles(directory).ToList();
                     pages.Sort();
                     chapter.Pages = pages;
+                    chapter.ChapterNumber = i;
                     chapters.Add(chapter);
+                    i++;
                 }
             }
 
@@ -100,11 +104,16 @@ namespace Kotomi.Models.Series
 
         public decimal? VolumeNumber { get; set; }
 
-        public decimal? ChapterNumber { get; set; }
+        public decimal ChapterNumber { get; set; }
 
         public List<string> Pages { get; set; } = default!;
 
-        public Control GetPageAsControl(int pageNumber) => new Image() { Source = new Bitmap(Pages[pageNumber - 1]) };
+        public async Task<Control> GetPageAsControlAsync(int pageNumber, SeriesCachingContext cache) => new Image() 
+        { 
+            Source = await cache.CacheAndGetBitmapAsync(ChapterNumber, pageNumber, async () => 
+            {
+                return await Task.Run(() => new Bitmap(Pages[pageNumber - 1]));            
+            })};
 
         public override string ToString() => Title ?? string.Empty;
     }

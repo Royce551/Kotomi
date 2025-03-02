@@ -36,10 +36,13 @@ namespace Kotomi.ViewModels
 
         private PageViewModelBase previousPage;
 
+        public SeriesCachingContext Cache { get; }
+
         public BookInfoViewModel(ISeries series, PageViewModelBase previousPage)
         {
             Series = series;
             this.previousPage = previousPage;
+            Cache = new SeriesCachingContext();
 
             foreach (var chapter in series.Chapters)
             {
@@ -84,6 +87,6 @@ namespace Kotomi.ViewModels
             this.chapter = chapter;
         }
 
-        public void Open() => bookInfo.MainView.NavigateTo(new ReaderViewModel(series, series.Chapters.ToList().FindIndex(x => x == chapter)));
+        public void Open() => bookInfo.MainView.NavigateTo(new ReaderViewModel(series, series.Chapters.ToList().FindIndex(x => x == chapter), bookInfo.Cache));
     }
 }

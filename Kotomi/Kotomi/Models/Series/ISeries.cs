@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
+using Kotomi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,10 +42,10 @@ namespace Kotomi.Models.Series
 
         public decimal? VolumeNumber { get; }
 
-        public decimal? ChapterNumber { get; }
+        public decimal ChapterNumber { get; }
 
         public int TotalPages { get; }
 
-        public Control GetPageAsControl(int pageNumber);
+        public Task<Control> GetPageAsControlAsync(int pageNumber, SeriesCachingContext cache);
     }
 }

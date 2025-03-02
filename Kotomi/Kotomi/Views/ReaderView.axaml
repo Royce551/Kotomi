@@ -57,7 +57,7 @@
       </DockPanel>
     </Panel>
     <Panel Background="{DynamicResource BackgroundColor}">
-      <TransitioningContentControl Content="{Binding CurrentPage}">
+      <TransitioningContentControl Content="{Binding CurrentPage^, FallbackValue='Loading...'}" Opacity="{Binding CurrentPageOpacity}">
         <TransitioningContentControl.PageTransition>
           <!--<PageSlide Orientation="Vertical" Duration="0:00:00.200" SlideOutEasing="ExponentialEaseOut" SlideInEasing="ExponentialEaseIn"/>-->
           <CompositePageTransition>
@@ -65,6 +65,11 @@
             <PageSlide Orientation="Horizontal" Duration="0:00:00.3" SlideInEasing="QuadraticEaseOut" SlideOutEasing="QuadraticEaseIn"/>
           </CompositePageTransition>
         </TransitioningContentControl.PageTransition>
+        <TransitioningContentControl.Transitions>
+          <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+          </Transitions>
+        </TransitioningContentControl.Transitions>
       </TransitioningContentControl>
 
       <Grid ColumnDefinitions="*,*,*">

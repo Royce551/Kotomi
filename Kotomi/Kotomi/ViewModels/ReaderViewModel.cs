@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Layout;
@@ -23,10 +24,14 @@ namespace Kotomi.ViewModels
         [ObservableProperty]
         private ISeries series;
 
-        public ReaderViewModel(ISeries series, int initialChapterIndex = 0)
+        private SeriesCachingContext cache;
+
+        public ReaderViewModel(ISeries series, int initialChapterIndex = 0, SeriesCachingContext? cache = null)
         {
             this.series = series;
-            SelectedChapterIndex = initialChapterIndex;        
+            SelectedChapterIndex = initialChapterIndex;
+            if (cache is null) this.cache = new SeriesCachingContext();
+            else this.cache = cache;
         }
 
         public override void AfterPageLoaded()
@@ -43,7 +48,7 @@ namespace Kotomi.ViewModels
         public decimal? Volume => CurrentChapter.VolumeNumber;
         public bool ShowVolume => Volume != null;
 
-        public decimal Chapter => CurrentChapter.ChapterNumber is null ? SelectedChapterIndex + 1 : (decimal)CurrentChapter.ChapterNumber;
+        public decimal Chapter => CurrentChapter.ChapterNumber;
 
         public int SelectedChapterIndex
         {
@@ -66,7 +71,6 @@ namespace Kotomi.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
-
         private int page = 1;
 
         [ObservableProperty]
@@ -80,95 +84,105 @@ namespace Kotomi.ViewModels
 
         private Thickness ReadingModeLongMarginAsThickness => new Thickness(MainView.Config.ReadingModeLongMargin, 0);
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CurrentPageOpacity))]
+        private bool currentPageIsReady = false;
+
+        public double CurrentPageOpacity => CurrentPageIsReady ? 1 : 0;
+
         // TODO: yikes! UI code in the VM layer? not ideal at all
-        public Control? CurrentPage
+        private async Task<Control> GetNextPageAsync()
         {
-            get
+            CurrentPageIsReady = false;
+            if (MainView.Config.ReadingModeSingle)
             {
-                if (MainView.Config.ReadingModeSingle)
-                {
-                    var page = CurrentChapter.GetPageAsControl(Page);
+                var page = await CurrentChapter.GetPageAsControlAsync(Page, cache);
 
-                    page.Bind(Layoutable.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
+                page.Bind(Layoutable.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
 
-                    return page;
-                }
-                
-                if (MainView.Config.ReadingModeTwo)
-                {
-                    if (Page % 2 == 0) Page--; // If the page is not odd, go back to the previous page so that the 2nd page will be even
-                    SecondPage = Page + 1;
-
-                    var grid = new Grid() { ColumnDefinitions = new("*,*") };
-                    var leftPage = CurrentChapter.GetPageAsControl(Page);
-
-                    leftPage.Bind(Layoutable.MarginProperty, new Binding
-                    {
-                        Source = MainView,
-                        Path = nameof(MainView.SafeAreaLeft)
-                    });
-
-                    if (MainView.Config.ReadingDirectionLeftToRight) Grid.SetColumn(leftPage, 0);
-                    else Grid.SetColumn(leftPage, 1);
-                    grid.Children.Add(leftPage);
-
-                    if (SecondPage <= CurrentChapter.TotalPages)
-                    {
-                        var rightPage = CurrentChapter.GetPageAsControl(SecondPage);
-                        if (MainView.Config.ReadingDirectionLeftToRight) Grid.SetColumn(rightPage, 1);
-                        else Grid.SetColumn(rightPage, 0);
-                        grid.Children.Add(rightPage);
-                    }
-                   
-                    grid.Bind(Layoutable.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
-
-                    return grid;
-                }
-                if (MainView.Config.ReadingModeLong)
-                {
-                    var scrollViewer = new ScrollViewer();
-                    var stackPanel = new StackPanel { Spacing = 5 };
-                    for (int i = 1; i < CurrentChapter.TotalPages; i++)
-                    {
-                        var page = CurrentChapter.GetPageAsControl(i);
-
-                        if (i == 1)
-                        {
-                            page.Bind(Layoutable.MarginProperty, new MultiBinding()
-                            {
-                                Converter = new CombineMarginsConverter(),
-                                Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) },
-                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
-                            });
-                        }
-                        else if (i == CurrentChapter.TotalPages)
-                        {
-                            page.Bind(Layoutable.MarginProperty, new MultiBinding()
-                            {
-                                Converter = new CombineMarginsConverter(),
-                                Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) },
-                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
-                            });
-                        }
-                        else
-                        {
-                            page.Bind(Layoutable.MarginProperty, new MultiBinding()
-                            {
-                                Converter = new CombineMarginsConverter(),
-                                Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) },
-                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
-                            });
-                        }
-
-                        stackPanel.Children.Add(page);
-                        
-                    }
-                    scrollViewer.Content = stackPanel;
-                    return scrollViewer;
-                }
-                else return null;
+                CurrentPageIsReady = true;
+                return page;
             }
+
+            if (MainView.Config.ReadingModeTwo)
+            {
+                if (Page % 2 == 0) Page--; // If the page is not odd, go back to the previous page so that the 2nd page will be even
+                SecondPage = Page + 1;
+
+                var grid = new Grid() { ColumnDefinitions = new("*,*") };
+                var leftPage = await CurrentChapter.GetPageAsControlAsync(Page, cache);
+
+                leftPage.Bind(Layoutable.MarginProperty, new Binding
+                {
+                    Source = MainView,
+                    Path = nameof(MainView.SafeAreaLeft)
+                });
+
+                if (MainView.Config.ReadingDirectionLeftToRight) Grid.SetColumn(leftPage, 0);
+                else Grid.SetColumn(leftPage, 1);
+                grid.Children.Add(leftPage);
+
+                if (SecondPage <= CurrentChapter.TotalPages)
+                {
+                    var rightPage = await CurrentChapter.GetPageAsControlAsync(SecondPage, cache);
+                    if (MainView.Config.ReadingDirectionLeftToRight) Grid.SetColumn(rightPage, 1);
+                    else Grid.SetColumn(rightPage, 0);
+                    grid.Children.Add(rightPage);
+                }
+
+                grid.Bind(Layoutable.MarginProperty, new Binding { Source = MainView, Path = IsMenuBarShown ? nameof(MainView.SafeAreaLeftBottomRight) : nameof(MainView.SafeArea) });
+
+                CurrentPageIsReady = true;
+                return grid;
+            }
+            if (MainView.Config.ReadingModeLong)
+            {
+                var scrollViewer = new ScrollViewer();
+                var stackPanel = new StackPanel { Spacing = 5 };
+                for (int i = 1; i < CurrentChapter.TotalPages; i++)
+                {
+                    var page = await CurrentChapter.GetPageAsControlAsync(i, cache);
+
+                    if (i == 1)
+                    {
+                        page.Bind(Layoutable.MarginProperty, new MultiBinding()
+                        {
+                            Converter = new CombineMarginsConverter(),
+                            Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftTopRight) },
+                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
+                        });
+                    }
+                    else if (i == CurrentChapter.TotalPages)
+                    {
+                        page.Bind(Layoutable.MarginProperty, new MultiBinding()
+                        {
+                            Converter = new CombineMarginsConverter(),
+                            Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftBottomRight) },
+                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
+                        });
+                    }
+                    else
+                    {
+                        page.Bind(Layoutable.MarginProperty, new MultiBinding()
+                        {
+                            Converter = new CombineMarginsConverter(),
+                            Bindings = [new Binding { Source = MainView, Path = nameof(MainView.SafeAreaLeftRight) },
+                                new Binding{ Source = this, Path = nameof(ReadingModeLongMarginAsThickness)}]
+                        });
+                    }
+
+                    stackPanel.Children.Add(page);
+
+                }
+
+                scrollViewer.Content = stackPanel;
+                CurrentPageIsReady = true;
+                return scrollViewer;
+            }
+            else throw new Exception();
         }
+
+        public Task<Control> CurrentPage => GetNextPageAsync();
 
         public IChapter CurrentChapter => Series.Chapters[SelectedChapterIndex];
 
