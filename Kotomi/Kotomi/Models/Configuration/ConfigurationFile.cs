@@ -32,6 +32,14 @@ namespace Kotomi.Models.Configuration
         [NotifyPropertyChangedRecipients]
         private bool readingDirectionRightToLeft = true;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedRecipients]
+        private int preloadPages = 5;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedRecipients]
+        private int maxCachedPages = 5;
+
         public static ConfigurationFile Read(string filePath)
         {
             if (!File.Exists(Path.Combine(filePath, "config.json"))) new ConfigurationFile().Save(filePath);

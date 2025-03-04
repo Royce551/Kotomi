@@ -24,18 +24,18 @@ namespace Kotomi.ViewModels
         [ObservableProperty]
         private ISeries series;
 
-        private SeriesCachingContext cache;
+        private SeriesCachingContext? cache;
 
         public ReaderViewModel(ISeries series, int initialChapterIndex = 0, SeriesCachingContext? cache = null)
         {
             this.series = series;
-            SelectedChapterIndex = initialChapterIndex;
-            if (cache is null) this.cache = new SeriesCachingContext();
-            else this.cache = cache;
+            this.cache = cache;
+            SelectedChapterIndex = initialChapterIndex;    
         }
 
         public override void AfterPageLoaded()
         {
+            if (cache is null) cache = new SeriesCachingContext(MainView.Config);
             MainView.WindowTitleOverride = $"{Series.Title} - Kotomi";
             base.AfterPageLoaded();
         }

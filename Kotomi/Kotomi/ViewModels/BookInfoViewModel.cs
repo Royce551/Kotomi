@@ -36,14 +36,13 @@ namespace Kotomi.ViewModels
 
         private PageViewModelBase previousPage;
 
-        public SeriesCachingContext Cache { get; }
+        public SeriesCachingContext? Cache { get; private set; }
 
         public BookInfoViewModel(ISeries series, PageViewModelBase previousPage)
         {
             Series = series;
             this.previousPage = previousPage;
-            Cache = new SeriesCachingContext();
-
+            
             foreach (var chapter in series.Chapters)
             {
                 allChapters.Add(new ChapterViewModel(this, series, chapter));
@@ -52,6 +51,7 @@ namespace Kotomi.ViewModels
 
         public override void AfterPageLoaded()
         {
+            Cache = new SeriesCachingContext(MainView.Config);
             MainView.WindowTitleOverride = $"{Series.Title} - Kotomi";
             base.AfterPageLoaded();
         }
