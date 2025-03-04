@@ -26,8 +26,15 @@ namespace Kotomi.ViewModels
 
             if (!Cache.ContainsKey((chapter, page)))
             {
-                Debug.WriteLine($"Cache miss: {chapter}, {page}");
-                Cache.Add((chapter, page), await addToCacheAction.Invoke());
+                try
+                {
+                    Debug.WriteLine($"Cache miss: {chapter}, {page}");
+                    Cache.Add((chapter, page), await addToCacheAction.Invoke());
+                }
+                catch (ArgumentException)
+                {
+                    Debug.WriteLine($"Something wonky happened with {chapter}, {page}");
+                }
             }
             var cachedControl = Cache[(chapter, page)];
      

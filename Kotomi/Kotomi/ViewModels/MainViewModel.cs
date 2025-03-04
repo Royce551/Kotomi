@@ -5,6 +5,7 @@ using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Configuration;
 using Kotomi.Models.Library;
+using Kotomi.ViewModels.Reader;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

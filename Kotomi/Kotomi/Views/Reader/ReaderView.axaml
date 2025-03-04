@@ -3,10 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Kotomi.ViewModels;assembly=Kotomi"
+             xmlns:tvm="clr-namespace:Kotomi.ViewModels.Reader;assembly=Kotomi"
              xmlns:ms="clr-namespace:Kotomi.Models.Series;assembly=Kotomi"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kotomi.Views.ReaderView" Background="{DynamicResource BackgroundColor}" RenderOptions.BitmapInterpolationMode="HighQuality"
-             x:DataType="vm:ReaderViewModel">
+             x:Class="Kotomi.Views.Reader.ReaderView" Background="{DynamicResource BackgroundColor}" RenderOptions.BitmapInterpolationMode="HighQuality"
+             x:DataType="tvm:ReaderViewModel">
   <DockPanel>
     <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}" IsVisible="{Binding IsMenuBarShown}">
       <DockPanel Margin="{Binding MainView.SafeAreaLeftTopRight}" LastChildFill="False">
@@ -57,7 +58,7 @@
       </DockPanel>
     </Panel>
     <Panel Background="{DynamicResource BackgroundColor}">
-      <TransitioningContentControl Content="{Binding CurrentPage^, FallbackValue='Loading...'}" Opacity="{Binding CurrentPageOpacity}">
+      <TransitioningContentControl Content="{Binding CurrentPage, FallbackValue='Loading...'}">
         <TransitioningContentControl.PageTransition>
           <!--<PageSlide Orientation="Vertical" Duration="0:00:00.200" SlideOutEasing="ExponentialEaseOut" SlideInEasing="ExponentialEaseIn"/>-->
           <CompositePageTransition>
@@ -65,11 +66,7 @@
             <PageSlide Orientation="Horizontal" Duration="0:00:00.3" SlideInEasing="QuadraticEaseOut" SlideOutEasing="QuadraticEaseIn"/>
           </CompositePageTransition>
         </TransitioningContentControl.PageTransition>
-        <TransitioningContentControl.Transitions>
-          <Transitions>
-            <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-          </Transitions>
-        </TransitioningContentControl.Transitions>
+       
       </TransitioningContentControl>
 
       <Grid ColumnDefinitions="*,*,*">

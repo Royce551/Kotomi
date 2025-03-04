@@ -2,6 +2,7 @@
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Series;
+using Kotomi.ViewModels.Reader;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Kotomi.Views
+namespace Kotomi.Views.Reader
 {
     public partial class ReaderView : UserControl
     {
