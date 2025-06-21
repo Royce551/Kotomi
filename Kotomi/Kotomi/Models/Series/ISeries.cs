@@ -1,6 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
+using Kotomi.Models.Library;
 using Kotomi.ViewModels;
+using Kotomi.Views;
+using Realms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +26,7 @@ namespace Kotomi.Models.Series
 
         public string? Description { get; }
 
-        public string? URL { get; set; }
+        public string? URL { get; }
 
         public string? PrefixedURL { get; }
 
@@ -49,5 +52,13 @@ namespace Kotomi.Models.Series
         public Task CachePage(int pageNumber, SeriesCachingContext cache);
 
         public Task<Control> GetPageAsControlAsync(int pageNumber, SeriesCachingContext cache);
+    }
+
+    public static class ISeriesExtensions
+    {
+        public static DatabaseSeries GetDatabaseSeries(this ISeries series, Realm realm)
+        {
+            return realm.All<DatabaseSeries>().First(x => x.URL == series.PrefixedURL);
+        }
     }
 }

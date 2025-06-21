@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Configuration;
 using Kotomi.Models.Library;
 using Kotomi.ViewModels.Reader;
+using Realms;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -56,7 +57,7 @@ namespace Kotomi.ViewModels
             }
         }
 
-        public Library Library { get; private set; } = default!; 
+        public Realm Realm { get; private set; } = default!;
 
         public ConfigurationFile Config { get; private set; } = default!; // will not be null when app is actually running
 
@@ -67,7 +68,9 @@ namespace Kotomi.ViewModels
                 var dataFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Squidhouse Software", "Kotomi");
                 Directory.CreateDirectory(dataFolderPath);
 
-                Library = new Library(dataFolderPath);
+                var realmConfig = new RealmConfiguration(Path.Combine(dataFolderPath, "library.realm"));
+                Realm = Realm.GetInstance(realmConfig);
+
                 Config = ConfigurationFile.Read(dataFolderPath);
             }  
 
@@ -78,7 +81,7 @@ namespace Kotomi.ViewModels
         {
             var dataFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Squidhouse Software", "Kotomi");
 
-            Library.Close();
+            Realm.Dispose();
             Config.Save(dataFolderPath);
         }
 

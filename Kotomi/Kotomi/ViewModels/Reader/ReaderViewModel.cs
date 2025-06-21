@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Kotomi.Models.Configuration;
+using Kotomi.Models.Library;
 using Kotomi.Models.Series;
 using Kotomi.Views;
 using System;
@@ -27,11 +28,12 @@ namespace Kotomi.ViewModels.Reader
 
         public SeriesCachingContext Cache { get; private set; } = default!;
 
-        public ReaderViewModel(ISeries series, int initialChapterIndex = 0, SeriesCachingContext? cache = null)
+        public ReaderViewModel(ISeries series, int initialChapterIndex = 0, SeriesCachingContext? cache = null, int initialPage = 1)
         {
             this.series = series;
             if (cache != null) Cache = cache;
-            SelectedChapterIndex = initialChapterIndex;    
+            SelectedChapterIndex = initialChapterIndex;
+            Page = initialPage;
         }
 
         public override void AfterPageLoaded()
@@ -43,6 +45,13 @@ namespace Kotomi.ViewModels.Reader
 
         public override void OnNavigatingAway()
         {
+            var x = Series.GetDatabaseSeries(MainView.Realm);
+            MainView.Realm.WriteAsync(() =>
+            {
+                x.LastReadChapterIndex = SelectedChapterIndex;
+                x.LastReadPage = Page;
+            });
+
             base.OnNavigatingAway();
         }
 

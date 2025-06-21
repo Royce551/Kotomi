@@ -59,7 +59,11 @@ namespace Kotomi.ViewModels
 
         public void Back() => MainView.NavigateTo(previousPage);
 
-        public void StartReading() => MainView.NavigateTo(new ReaderViewModel(Series));
+        public void StartReading()
+        {
+            var dbSeries = Series.GetDatabaseSeries(MainView.Realm);
+            MainView.NavigateTo(new ReaderViewModel(Series, dbSeries.LastReadChapterIndex, Cache, dbSeries.LastReadPage));
+        }
 
         public void AddRemoveLibrary()
         {

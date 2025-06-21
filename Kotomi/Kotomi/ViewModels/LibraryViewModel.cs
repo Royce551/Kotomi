@@ -18,8 +18,7 @@ namespace Kotomi.ViewModels
     {
         //[ObservableProperty]
         //private ObservableCollection<SeriesViewModel> allSeries = new();
-        public IEnumerable<SeriesViewModel> AllSeries => MainView.Library.Series.Select(x => new SeriesViewModel(this, x));
-
+        public IEnumerable<SeriesViewModel> AllSeries => MainView.Realm.All<DatabaseSeries>().ToList().Select(x => new SeriesViewModel(this, x.ConcreteSeries));
         public LibraryViewModel()
         {
             
@@ -32,7 +31,8 @@ namespace Kotomi.ViewModels
 
         public void Import(string url)
         {
-            MainView.Library.Import($"folder://{url}");
+            //MainView.Library.Import($"folder://{url}");
+            MainView.Realm.Write(() => MainView.Realm.Add(new DatabaseSeries(SeriesLocator.GetSeriesForPrefixedURL($"folder://{url}"))));
             OnPropertyChanged(nameof(AllSeries));
         }
     }
@@ -43,8 +43,8 @@ namespace Kotomi.ViewModels
         public string? Title => series.Title;
         public string? Author => series.Author;
         public byte[]? Cover => series.Cover;
-        public string? URL { get; set; }
-        public string? PrefixedURL { get; set; }
+        public string? URL => series.URL;
+        public string? PrefixedURL => series.PrefixedURL;
         public IChapter[] Chapters => series.Chapters;
         public string? Description => series.Description;
         public string[]? Genres => series.Genres;
