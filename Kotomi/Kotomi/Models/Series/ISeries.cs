@@ -46,6 +46,8 @@ namespace Kotomi.Models.Series
 
         public int TotalPages { get; }
 
+        public Task CachePage(int pageNumber, SeriesCachingContext cache);
+
         public Task<Control> GetPageAsControlAsync(int pageNumber, SeriesCachingContext cache);
     }
 }

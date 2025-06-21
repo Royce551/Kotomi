@@ -38,7 +38,7 @@ namespace Kotomi.Models.Configuration
 
         [ObservableProperty]
         [NotifyPropertyChangedRecipients]
-        private int maxCachedPages = 5;
+        private int maxCachedPages = 15;
 
         public static ConfigurationFile Read(string filePath)
         {

@@ -108,6 +108,14 @@ namespace Kotomi.Models.Series
 
         public List<string> Pages { get; set; } = default!;
 
+        public async Task CachePage(int pageNumber, SeriesCachingContext cache)
+        {
+            await cache.CacheAsync(ChapterNumber, pageNumber, async () =>
+            {
+                return await Task.Run(() => new Bitmap(Pages[pageNumber - 1]));
+            });
+        }
+
         public async Task<Control> GetPageAsControlAsync(int pageNumber, SeriesCachingContext cache) => new Image() 
         { 
             Source = await cache.CacheAndGetBitmapAsync(ChapterNumber, pageNumber, async () => 

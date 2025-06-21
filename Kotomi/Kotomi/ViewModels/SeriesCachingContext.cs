@@ -18,10 +18,18 @@ namespace Kotomi.ViewModels
 
         public async Task<Bitmap> CacheAndGetBitmapAsync(decimal chapter, int page, Func<Task<Bitmap>> addToCacheAction)
         {
+            await CacheAsync(chapter, page, addToCacheAction);
+     
+            return Cache[(chapter, page)];
+        }
+
+        public async Task CacheAsync(decimal chapter, int page, Func<Task<Bitmap>> addToCacheAction)
+        {
             if (Cache.Count > config.MaxCachedPages)
             {
                 Debug.WriteLine($"Page removed from cache: {Cache.First().Key.chapter} {Cache.First().Key.page}");
                 Cache.Remove(Cache.First().Key);
+                Debug.WriteLine($"There are now {Cache.Count} pages");
             }
 
             if (!Cache.ContainsKey((chapter, page)))
@@ -36,9 +44,7 @@ namespace Kotomi.ViewModels
                     Debug.WriteLine($"Something wonky happened with {chapter}, {page}");
                 }
             }
-            var cachedControl = Cache[(chapter, page)];
-     
-            return cachedControl;
         }
+
     }
 }

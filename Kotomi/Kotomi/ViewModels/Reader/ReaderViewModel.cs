@@ -151,17 +151,11 @@ namespace Kotomi.ViewModels.Reader
 
             if (MainView.Config.ReadingDirectionLeftToRight)
             {
-                if (MainView.Config.ReadingModeLong) PreviousChapter();
-                else if (Page - pagesToTurn >= 1)
-                    Page -= pagesToTurn;
-                else PreviousChapter();
+                PreviousPage(pagesToTurn);
             }
             else
             {
-                if (MainView.Config.ReadingModeLong) NextChapter();
-                else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
-                    Page += pagesToTurn;
-                else NextChapter();
+                NextPage(pagesToTurn);
             }
         }
         public void PageRight()
@@ -170,18 +164,35 @@ namespace Kotomi.ViewModels.Reader
 
             if (MainView.Config.ReadingDirectionLeftToRight)
             {
-                if (MainView.Config.ReadingModeLong) NextChapter();
-                else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
-                    Page += pagesToTurn;
-                else NextChapter();
+                NextPage(pagesToTurn);
             }
             else
             {
-                if (MainView.Config.ReadingModeLong) PreviousChapter();
-                else if (Page - pagesToTurn >= 1)
-                    Page -= pagesToTurn;
-                else PreviousChapter();
+                PreviousPage(pagesToTurn);
             }
+        }
+
+        public void NextPage(int pagesToTurn)
+        {
+            if (MainView.Config.ReadingModeLong) NextChapter();
+            else if (Page + pagesToTurn <= CurrentChapter.TotalPages)
+                Page += pagesToTurn;
+            else NextChapter();
+
+            var x = Page + MainView.Config.PreloadPages;
+            for (int i = Page; i <= ( x <= CurrentChapter.TotalPages ? x : CurrentChapter.TotalPages); i++)
+                _ = CurrentChapter.CachePage(i, Cache);
+        }
+        public void PreviousPage(int pagesToTurn)
+        {
+            if (MainView.Config.ReadingModeLong) PreviousChapter();
+            else if (Page - pagesToTurn >= 1)
+                Page -= pagesToTurn;
+            else PreviousChapter();
+
+            var x = Page - MainView.Config.PreloadPages;
+            for (int i = Page; i >= (x <= 1 ? 1 : x); i--)
+                _ = CurrentChapter.CachePage(i, Cache);
         }
 
         public void NextChapter()
