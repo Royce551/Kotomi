@@ -6,12 +6,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Kotomi.Models.Configuration;
 using Kotomi.Models.Library;
 using Kotomi.ViewModels.Reader;
+using Kotomi.Views;
 using Realms;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kotomi.ViewModels
 {
@@ -93,6 +95,45 @@ namespace Kotomi.ViewModels
             SelectedView = page;
             page.AfterPageLoaded();
         }
+
+        [ObservableProperty]
+        private PageViewModelBase? sidePaneView;
+
+        [ObservableProperty]
+        private double sidePanelWidth;
+
+        private SidePane currentSidePane = SidePane.None;
+
+        public async Task OpenSidePaneAsync(SidePane pane, double width)
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime && desktopLifetime.MainWindow != null)
+            {
+                if (pane == currentSidePane)
+                {
+                    await (desktopLifetime.MainWindow.Content as MainView)?.AnimateSidePaneOutAsync();
+
+                    currentSidePane = SidePane.None;
+
+                    SidePaneView = null;
+
+                    return;
+                }
+
+                currentSidePane = pane;
+
+                SidePaneView = new PageViewModelBase();
+                SidePanelWidth = width;
+                await (desktopLifetime.MainWindow.Content as MainView)?.AnimateSidePaneInAsync(width);
+            }
+        }
+
+        public async void OpenSettingsCommand() => await OpenSidePaneAsync(SidePane.Test, 450);
+    }
+
+    public enum SidePane
+    {
+        Test,
+        None
     }
 
     public class CombineMarginsConverter : IMultiValueConverter

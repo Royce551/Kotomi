@@ -12,16 +12,40 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
+  <UserControl.Resources>
+    <Animation x:Key="RightSidePaneIn450" x:SetterTargetType="ContentControl" Duration="0:0:.150" Easing="ExponentialEaseIn" FillMode="Forward">
+      <KeyFrame Cue="0%">
+        <Setter Property="Margin" Value="0, 0, -450, 0"/>
+      </KeyFrame>
+      <KeyFrame Cue="100%">
+        <Setter Property="Margin" Value="0, 0, 0, 0"/>
+      </KeyFrame>
+    </Animation>
+    <Animation x:Key="RightSidePaneOut450" x:SetterTargetType="ContentControl" Duration="0:0:.150" Easing="ExponentialEaseOut" FillMode="Forward">
+      <KeyFrame Cue="100%">
+        <Setter Property="Margin" Value="0, 0, -450, 0"/>
+      </KeyFrame>
+      <KeyFrame Cue="0%">
+        <Setter Property="Margin" Value="0, 0, 0, 0"/>
+      </KeyFrame>
+    </Animation>
+  </UserControl.Resources>
+  
   <DockPanel>
     <Panel DockPanel.Dock="Top" Background="{DynamicResource ForegroundColor}" IsVisible="{Binding IsNavbarVisible}">
       <Panel Margin="{Binding SafeAreaLeftTopRight}">
         <StackPanel Margin="10,5" Spacing="15" Orientation="Horizontal">
           <TextBlock Text="Library" FontWeight="Bold"/>
           <TextBlock Text="Browse"/>
-          <TextBlock Text="Settings"/>
+        </StackPanel>
+        <StackPanel Margin="10,5" Spacing="15" Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button Content="Settings" Command="{Binding OpenSettingsCommand}"/>
         </StackPanel>
       </Panel>
     </Panel>
+
+    <ContentControl x:Name="SidePaneControl" DockPanel.Dock="Right" Width="{Binding SidePanelWidth}" Content="{Binding SidePaneView}"/>
+    
     <TransitioningContentControl Content="{Binding SelectedView}">
       <TransitioningContentControl.PageTransition>
         <CompositePageTransition>

@@ -1,8 +1,11 @@
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
 using Avalonia.Platform.Storage;
 using Kotomi.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 namespace Kotomi.Views
 {
@@ -43,5 +46,16 @@ namespace Kotomi.Views
             }
         }
 
+        public async Task AnimateSidePaneInAsync(double width)
+        {
+            var animation = (Animation)Resources["RightSidePaneIn450"];
+            await animation.RunAsync(SidePaneControl);
+        }
+
+        public async Task AnimateSidePaneOutAsync()
+        {
+            var animation = (Animation)Resources["RightSidePaneOut450"];
+            await animation.RunAsync(SidePaneControl);
+        }
     }
 }

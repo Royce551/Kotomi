@@ -116,6 +116,7 @@ namespace Kotomi.ViewModels.Reader
                 {
                     var page = new SinglePageViewModel(this);
                     page.LoadImages(cancellationToken);
+                    UpdateWindowTitle();
                     return page;
                 }
                 else if (MainView.Config.ReadingModeTwo)
@@ -125,12 +126,14 @@ namespace Kotomi.ViewModels.Reader
 
                     var page = new TwoPageViewModel(this);
                     page.LoadImages(cancellationToken);
+                    UpdateWindowTitle();
                     return page;
                 }
                 else
                 {
                     var page = new LongPageViewModel(this);
                     page.LoadImages(cancellationToken);
+                    UpdateWindowTitle();
                     return page;
                 }
             }
@@ -216,6 +219,15 @@ namespace Kotomi.ViewModels.Reader
                 SelectedChapterIndex--;
                 Page = CurrentChapter.TotalPages; // Flip to last page of chapter after chapter has been switched
             }
+        }
+
+        private void UpdateWindowTitle()
+        {
+            if (!IsMenuBarShown)
+            {
+                MainView.WindowTitleOverride = $"{Series.Title}, Chapter {Chapter}, Page {Page}{(MainView.Config.ReadingModeTwo ? "-" : string.Empty)}{(MainView.Config.ReadingModeTwo ? SecondPage : string.Empty)} / {CurrentChapter.TotalPages} - Kotomi";
+            }
+            else MainView.WindowTitleOverride = $"{Series.Title} - Kotomi";
         }
 
         [ObservableProperty]

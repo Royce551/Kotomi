@@ -36,23 +36,6 @@
             </StackPanel>
            </Panel>
         </Border>
-        <ItemsControl ItemsSource="{Binding AllSeries}" Margin="10">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <Button Command="{Binding Open}">
-                <StackPanel Spacing="2" Width="200">
-                  <Image Source="{Binding Cover, Converter={StaticResource byteArrayToBitmapConverter}}" RenderOptions.BitmapInterpolationMode="HighQuality"/>
-                  <TextBlock Text="{Binding Title}" FontSize="12" TextWrapping="Wrap"/>
-                </StackPanel>
-              </Button>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel/>
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-        </ItemsControl>
 
         <Button Margin="10,10,0,0" Click="Button_Click">Add to library</Button>
       </StackPanel>
